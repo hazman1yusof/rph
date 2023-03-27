@@ -10,6 +10,7 @@ $(document).ready(function () {
 		let id = $(this).val();
 		let week = weeks[id];
 
+		$('#sel_weeks_id').val(week.key);
 		$('#sel_weeks_p').text('Week : '+week.week);
 	});
 
@@ -19,23 +20,19 @@ $(document).ready(function () {
   	}else{
 	  	$('select#sel_weeks,#sel_year').parent().addClass('disabled');
 	  	$('#sel_tobtm').hide();
-			$('#rph_select,#sel_totop').show();
+			$('#rph_select,#sel_totop,#sel_print').show();
   	}
 	});
 
 	$('#sel_totop').click(function(){
   	$('select#sel_weeks,#sel_year').parent().removeClass('disabled');
   	$('#sel_tobtm').show();
-		$('#rph_select,#sel_totop').hide();
+		$('#rph_select,#sel_totop,#sel_print').hide();
 	});
 
-	$("form#tambah_subjek").validate({
+	$("form#tambah_rp2h").validate({
 		ignore: [], //check jgk hidden
 		messages: {
-		    general_assesment: {
-      			required: "",
-		      	minlength: jQuery.validator.format("At least {0} characters required!")
-		    }
 		  },
 	  	invalidHandler: function(event, validator) {
 	  		validator.errorList.forEach(function(e,i){
@@ -45,29 +42,7 @@ $(document).ready(function () {
 	  		});
 	  		$(validator.errorList[0].element).focus();
 	  		alert('Please fill all mandatory field');
-	  	},
-	  	errorPlacement: function(error, element) {
-	  		if (element.attr("name") == "general_assesment" ) {
-		      error.insertAfter(element);
-		    }
 	  	}
-	});
-
-	$('i.right.floated.link.plus.icon.blue').popup();
-	$('#add_1,#add_2,#add_3,#add_4,#add_5').click(function(){
-		let hari = $(this).data('hari');
-  	oper = 'add';
-		emptyFormdata([],'form#tambah_subjek');
-		$('.ui.modal').modal({
-			onApprove:function($element){
-				if($("form#tambah_subjek").valid()) {
-	  				save_subjek(hari);
-					return true;
-				}else{
-					return false;
-				}
-			}
-		  }).modal('show');
 	});
 
 	init_jadual();
@@ -76,7 +51,7 @@ $(document).ready(function () {
 var oper='add';
 function save_subjek(hari){
 	var param = {
-		action: 'save_jadual',
+		action: 'save_rph',
 		hari: hari,
 		oper:oper
 	}
@@ -158,61 +133,15 @@ function letak_jadual(){
 	$('span#4_cnt').text(cnt_4);
 	$('span#5_cnt').text(cnt_5);
 
-	$('i.edit_').on('click',edit_jadual);
-	$('i.del_').on('click',delete_jadual);
 	$('div.add_rph').on('click',add_rph);
 }
 
-function delete_jadual(event){
-	let id = $(this).data('id');
-	let data = jadual[id];
-
-	let text = "Betul nak delete ni?";
-	if (confirm(text) == true) {
-		var param = {
-			action: 'save_jadual',
-			'_token': $('#_token').val(),
-			idno: data.idno,
-			oper:'del'
-		}
-
-		$.post( "./rph?"+$.param(param),{}, function( data ){
-			
-		},'json').fail(function(data) {
-
-	    }).done(function(data){
-			init_jadual();
-	    });
-	}
-}
-
-function edit_jadual(event){
-	let id = $(this).data('id');
-	let data = jadual[id];
-	let entries = Object.entries(data);
-
-	entries.forEach(function(e,i){
-		var input=$("form#tambah_subjek [name='"+e[0]+"']").val(e[1]);
-	});
-
-	oper = 'edit';
+function add_rph(event){
+	init_form($(this).data('id'));
 	$('.ui.modal').modal({
 		onApprove:function($element){
 			if($("form#tambah_subjek").valid()) {
-					save_subjek(data.hari);
-				return true;
-			}else{
-				return false;
-			}
-		}
-	}).modal('show');
-}
-
-function add_rph(){
-	$('.ui.modal').modal({
-		onApprove:function($element){
-			if($("form#tambah_subjek").valid()) {
-  				save_subjek(hari);
+  				// save_subjek(hari);
 				return true;
 			}else{
 				return false;
@@ -230,6 +159,17 @@ function pop_weeks(weeks){
 			$('select#sel_weeks').append(`<option value="`+i+`">`+e.key+` &nbsp;(`+e.week+`) </option>`);
 		}
 	});
+}
+
+function init_form(id){
+	let data = jadual[id];
+	let entries = Object.entries(data);
+
+	entries.forEach(function(e,i){
+		var input=$("form#tambah_rph [name='"+e[0]+"']").val(e[1]);
+	});
+	$("form#tambah_rph [name='minggu']").val($('#sel_weeks_id').val());
+	
 }
 
 const swiper = new Swiper('.swiper', {

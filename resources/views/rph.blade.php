@@ -55,6 +55,7 @@
  <p><b><span id="sel_weeks_p"></span></b></p>
  <button type="button" class="fluid ui button green" id="sel_tobtm">Select</button>
  <button type="button" class="fluid ui button red" id="sel_totop" style="display:none;">Re - Select</button>
+ <button type="button" class="fluid ui button blue" id="sel_print" style="display:none;margin-top: 10px;">PDF</button>
 </form>
 
 <div class="row" id="rph_select" style="display:none;">
@@ -126,46 +127,76 @@
     RPH Menu
   </div>
   <div class="scrolling content">
-    <form class="ui form" id="tambah_subjek">
+    <form class="ui form" id="tambah_rph">
       <input id="_token" name="_token" value="{{ csrf_token() }}" type="hidden">
-      <input type="hidden" name="idno">
-      <div class="field">
-        <label>SUBJEK</label>
-        <input type="text" name="subjek" id="subjek" class="uppercase" readonly>
+      <input type="hidden" name="idno" id="idno">
+      <input type="hidden" name="sel_weeks_id" id="sel_weeks_id">
+
+
+      <div class="ui segments">
+          <div class="ui secondary segment header">
+            UTAMA (TAK PERLU UBAH)
+          </div>
+          <div class="ui segment">
+            <div class="two fields">
+              <div class="field">
+                <label>SUBJEK</label>
+                <input type="text" name="subjek" id="subjek" class="uppercase" readonly>
+              </div>
+              <div class="field">
+                <label>KELAS</label>
+                <input type="text" name="kelas" id="kelas" class="uppercase" readonly>
+              </div>
+          </div>
+          <div class="two fields">
+              <div class="field">
+                <label>HARI</label>
+                <input type="text" name="hari" id="hari" readonly>
+              </div>
+              <div class="field">
+                <label>MINGGU</label>
+                <input type="text" name="minggu" id="minggu" readonly>
+              </div>
+          </div>
+          <div class="two fields">
+              <div class="field">
+                <label>MASA DARI</label>
+                <input type="text" name="masa_dari" id="masa_dari" readonly>
+              </div>
+              <div class="field">
+                <label>MASA HINGGA</label>
+                <input type="text" name="masa_hingga" id="masa_hingga" readonly>
+              </div>
+          </div>
+          </div>
       </div>
-      <div class="field">
-        <label>KELAS</label>
-        <input type="text" name="kelas" id="kelas" class="uppercase" readonly>
-      </div>
-      <div class="field">
-        <label>HARI</label>
-        <input type="text" name="hari" id="hari" readonly>
-      </div>
-      <div class="field">
-        <label>MASA DARI</label>
-        <input type="time" name="masa_dari" id="masa_dari" readonly>
-      </div>
-      <div class="field">
-        <label>MASA HINGGA</label>
-        <input type="time" name="masa_hingga" id="masa_hingga" readonly>
-      </div>
+      
       <div class="field">
         <label>TOPIK UTAMA</label>
-        <input type="time" name="masa_hingga" id="topik_utama" required>
+        <div class="ui icon input">
+          <input type="text" name="topik_utama" id="topik_utama" required>
+          <i class="inverted circular search link icon"></i>
+        </div>
       </div>
       <div class="field">
         <label>SUB TOPIK</label>
-        <input type="time" name="masa_hingga" id="sub_topik" required>
+        <div class="ui icon input">
+          <input type="text" name="sub_topik" id="sub_topik" required>
+          <i class="inverted circular search link icon"></i>
+        </div>
       </div>
       <div class="field">
         <label>OBJEKTIF PEMBELAJARAN / KRITERIA KEJAYAAN</label>
-        <input type="time" name="objektif" id="objektif" required>
+        <div class="ui icon input">
+          <input type="text" name="objektif" id="objektif" required>
+          <i class="inverted circular search link icon"></i>
+        </div>
       </div>
       <div class="field">
         <label>AKTIVITI PEMBELAJARAN & PEMUDAHCARAAN</label>
-        <input type="time" name="aktiviti" id="aktiviti" required>
+        <textarea type="text" name="aktiviti" id="aktiviti" required></textarea>
       </div>
-      <div class="ui red segments">
+      <div class="ui segments">
           <div class="ui segment header">
             ABM / BBM
           </div>
@@ -173,63 +204,321 @@
             <div class="inline fields">
                 <div class="field">
                     <div class="ui checkbox">
-                      <input type="checkbox" class="hidden" name="abm_1" id="abm_1">
+                      <input type="checkbox" name="abm_1" id="abm_1">
                       <label>Buku Teks</label>
                     </div>
                 </div>
                 <div class="field">
                     <div class="ui checkbox">
-                      <input type="checkbox" class="hidden" name="abm_2" id="abm_2">
-                      <label>I agree to the Terms and Conditions</label>
+                      <input type="checkbox" name="abm_2" id="abm_2">
+                      <label>Edaran / Lembaran Kerja</label>
                     </div>
                 </div>
                 <div class="field">
                     <div class="ui checkbox">
-                      <input type="checkbox" class="hidden" name="abm_3" id="abm_3">
-                      <label>I agree to the Terms and Conditions</label>
+                      <input type="checkbox" name="abm_3" id="abm_3">
+                      <label>Modul Subjek</label>
                     </div>
                 </div>
                 <div class="field">
                     <div class="ui checkbox">
-                      <input type="checkbox" class="hidden" name="abm_4" id="abm_4">
-                      <label>I agree to the Terms and Conditions</label>
+                      <input type="checkbox" name="abm_4" id="abm_4">
+                      <label>Buku Rujukan / Kerja</label>
                     </div>
                 </div>
                 <div class="field">
                     <div class="ui checkbox">
-                      <input type="checkbox" class="hidden" name="abm_5" id="abm_5">
-                      <label>I agree to the Terms and Conditions</label>
+                      <input type="checkbox" name="abm_5" id="abm_5">
+                      <label>Model/ Gambar / Carta</label>
                     </div>
                 </div>
                 <div class="field">
-                    <input type="time" name="masa_hingga" id="masa_hingga">
+                    <input type="text" name="abm_lain2" id="abm_lain2" placeholder="lain-lain">
                 </div>
             </div>
           </div>
       </div>
-      <div class="field">
-        <label>ABM / BBM</label>
-        <input type="time" name="masa_hingga" id="masa_hingga">
+
+      <div class="ui segments">
+          <div class="ui segment header">
+            ELEMEN MERENTAS KURIKULUM (EMK)
+          </div>
+          <div class="ui secondary segment">
+            <div class="inline fields">
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="emk_1" id="emk_1">
+                      <label>Manhaj ASWJ</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="emk_2" id="emk_2">
+                      <label>Patriotisme</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="emk_3" id="emk_3">
+                      <label>STEM</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="emk_4" id="emk_4">
+                      <label>Bahasa</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="emk_5" id="emk_5">
+                      <label>Keusahawanan</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="emk_6" id="emk_6">
+                      <label>Kelestarian Alam Sekitar</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="emk_7" id="emk_7">
+                      <label>Nilai Murni</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="emk_8" id="emk_8">
+                      <label>TMK ( ICT )</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="emk_9" id="emk_9">
+                      <label>Kelestarian Global</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="emk_10" id="emk_10">
+                      <label>Sains & Teknologi</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="emk_11" id="emk_11">
+                      <label>Kreativiti & Inovasi</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="emk_12" id="emk_12">
+                      <label>Pendidikan Kewangan</label>
+                    </div>
+                </div>
+            </div>
+          </div>
       </div>
-      <div class="field">
-        <label>ELEMEN MERENTAS KURIKULUM (EMK)</label>
-        <input type="time" name="masa_hingga" id="masa_hingga">
+
+      <div class="ui segments">
+          <div class="ui segment header">
+            TAHAP PEMIKIRAN
+          </div>
+          <div class="ui secondary segment">
+            <div class="inline fields">
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="tpn_1" id="tpn_1">
+                      <label>Mengingat</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="tpn_2" id="tpn_2">
+                      <label>Mengaplikasi</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="tpn_3" id="tpn_3">
+                      <label>Menilai</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="tpn_4" id="tpn_4">
+                      <label>Memahami</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="tpn_5" id="tpn_5">
+                      <label>Menganalisis</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="tpn_6" id="tpn_6">
+                      <label>Mencipta</label>
+                    </div>
+                </div>
+            </div>
+          </div>
       </div>
-      <div class="field">
-        <label>TAHAP PEMIKIRAN</label>
-        <input type="time" name="masa_hingga" id="masa_hingga">
+
+      <div class="ui segments">
+          <div class="ui segment header">
+            PETA PEMIKIRAN I-THINK
+          </div>
+          <div class="ui secondary segment">
+            <div class="inline fields">
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="ppi_1" id="ppi_1">
+                      <label>Peta Bulatan</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="ppi_2" id="ppi_2">
+                      <label>Peta Titi</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="ppi_3" id="ppi_3">
+                      <label>Peta Alir</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="ppi_4" id="ppi_4">
+                      <label>Peta Dakap</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="ppi_5" id="ppi_5">
+                      <label>Peta Buih</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="ppi_6" id="ppi_6">
+                      <label>Peta Pelbagai Alir</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="ppi_7" id="ppi_7">
+                      <label>Peta Pokok</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="ppi_8" id="ppi_8">
+                      <label>Peta Buih Berganda</label>
+                    </div>
+                </div>
+            </div>
+          </div>
       </div>
-      <div class="field">
-        <label>PETA PEMIKIRAN I-THINK</label>
-        <input type="time" name="masa_hingga" id="masa_hingga">
+
+      <div class="ui segments">
+          <div class="ui segment header">
+            PENILAIAN PDPC
+          </div>
+          <div class="ui secondary segment">
+            <div class="inline fields">
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="pdpc_1" id="pdpc_1">
+                      <label>Lembaran Kerja</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="pdpc_2" id="pdpc_2">
+                      <label>Kuiz</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="pdpc_3" id="pdpc_3">
+                      <label>Tugasan</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="pdpc_4" id="pdpc_4">
+                      <label>Hasil Kerja Pelajar</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="pdpc_5" id="pdpc_5">
+                      <label>Lisan</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="pdpc_6" id="pdpc_6">
+                      <label>Pembentangan</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="pdpc_7" id="pdpc_7">
+                      <label>Pemerhatian</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="pdpc_8" id="pdpc_8">
+                      <label>Drama</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <input type="text" name="pdpc_lain2" id="pdpc_lain2" placeholder="lain-lain">
+                </div>
+            </div>
+          </div>
       </div>
-      <div class="field">
-        <label>PENILAIAN PDPC</label>
-        <input type="time" name="masa_hingga" id="masa_hingga">
-      </div>
-      <div class="field">
-        <label>REFLEKSI</label>
-        <input type="time" name="masa_hingga" id="masa_hingga">
+
+      <div class="ui segments">
+          <div class="ui segment header">
+            REFLEKSI
+          </div>
+          <div class="ui secondary segment">
+            Aktiviti pengajaran dan pembelajaran ditangguhkan kerana : <br>
+            <div class="inline fields">
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="rlsi_1" id="rlsi_1">
+                      <label>Mesyuarat / Kursus</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="rlsi_2" id="rlsi_2">
+                      <label>Aktiviti Luar</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="rlsi_3" id="rlsi_3">
+                      <label>Cuti Rehat / Cuti Sakit</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" name="rlsi_4" id="rlsi_4">
+                      <label>Program Sekolah</label>
+                    </div>
+                </div>
+            </div>
+          </div>
       </div>
     </form>
   </div>

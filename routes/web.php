@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/','rphController@goto');
+Route::get('/','rphController@show');
 Route::get('/rph','rphController@show');
 Route::get('/rph_table','rphController@table');
 Route::post('/rph','rphController@form');

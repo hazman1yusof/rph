@@ -48,8 +48,7 @@ class rphController extends Controller
     public function show(Request $request){
         $year = date_create('today')->format('Y');
         $weeks = $this->getWeek();
-        // $weeks2 = json_decode(json_encode($weeks));
-        // dd($weeks);
+
         return view('rph',compact('year','weeks'));
     }
 
@@ -121,7 +120,7 @@ class rphController extends Controller
           $to = (clone $dtStart)->modify('+6 Days')->format('d/m/Y');
 
           $responce = new stdClass();
-          $responce->key = 'week '.$key;
+          $responce->key = $key;
           $responce->week = $from.' - '.$to;
 
           array_push($weeks,$responce);
