@@ -126,7 +126,7 @@
   <div class="header">
     RPH Menu
   </div>
-  <div class="scrolling content">
+  <div class="content">
     <form class="ui form" id="tambah_rph">
       <input id="_token" name="_token" value="{{ csrf_token() }}" type="hidden">
       <input type="hidden" name="idno" id="idno">
@@ -523,10 +523,10 @@
     </form>
   </div>
   <div class="actions">
-    <button class="ui deny button" id="cancel">
+    <button class="ui deny button" id="cancel" type="button">
       Cancel
     </button>
-    <button class="ui positive right labeled icon button" id="save">
+    <button class="ui positive right labeled icon button" id="save" type="button">
       Save
       <i class="checkmark icon"></i>
     </button>

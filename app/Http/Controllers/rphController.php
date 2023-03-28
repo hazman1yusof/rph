@@ -36,6 +36,10 @@ class rphController extends Controller
                 return $this->save_jadual($request);
                 break;
 
+            case 'save_rph':
+                return $this->save_rph($request);
+                break;
+
             default:
                 return 'error happen..';
         }
@@ -86,6 +90,32 @@ class rphController extends Controller
             }
 
             DB::commit();
+            
+            $responce = new stdClass();
+            $responce->operation = 'SUCCESS';
+            return json_encode($responce);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return response($e->getMessage(), 500);
+        }
+    }
+
+    public function save_rph(Request $request){
+        DB::beginTransaction();
+
+        try {
+
+            if($request->oper == 'add'){
+                dd($_REQUEST);
+            }else if($request->oper == 'edit'){
+                
+            }else if($request->oper == 'del'){
+                
+            }
+
+            // DB::commit();
             
             $responce = new stdClass();
             $responce->operation = 'SUCCESS';

@@ -30,41 +30,49 @@ $(document).ready(function () {
 		$('#rph_select,#sel_totop,#sel_print').hide();
 	});
 
-	$("form#tambah_rp2h").validate({
+	
+	$("form#tambah_rph").validate({
 		ignore: [], //check jgk hidden
 		messages: {
+		    general_assesment: {
+      			required: "",
+		      	minlength: jQuery.validator.format("At least {0} characters required!")
+		    }
 		  },
 	  	invalidHandler: function(event, validator) {
-	  		validator.errorList.forEach(function(e,i){
-	  			if($(e.element).is("select")){
-	  				$(e.element).parent().addClass('error');
-	  			}
-	  		});
-	  		$(validator.errorList[0].element).focus();
-	  		alert('Please fill all mandatory field');
+	  		// validator.errorList.forEach(function(e,i){
+	  		// 	if($(e.element).is("select")){
+	  		// 		$(e.element).parent().addClass('error');
+	  		// 	}
+	  		// });
+	  		// $(validator.errorList[0].element).focus();
+	  		// alert('Please fill all mandatory field');
+	  	},
+	  	errorPlacement: function(error, element) {
+	  		if (element.attr("name") == "sub_topik"||element.attr("name") == "topik_utama" ||element.attr("name") == "objektif" ) {
+		      error.insertAfter(element.parent());
+		    }
 	  	}
 	});
 
 	init_jadual();
 });
 
-var oper='add';
-function save_subjek(hari){
+function save_rph(oper){
 	var param = {
 		action: 'save_rph',
-		hari: hari,
 		oper:oper
 	}
 
-	var tambah_subjek = $("form#tambah_subjek").serializeArray();
+	var tambah_rph = $("form#tambah_rph").serializeArray();
 
-	$.post( "./rph?"+$.param(param),$.param(tambah_subjek), function( data ){
+	$.post( "./rph?"+$.param(param),$.param(tambah_rph), function( data ){
 		
 	},'json').fail(function(data) {
 
-    }).done(function(data){
+  }).done(function(data){
 		init_jadual();
-    });
+  });
 }
 
 var jadual = [];
@@ -118,7 +126,7 @@ function letak_jadual(){
               MASA DARI : `+masa_dari+` – `+masa_hingga+` <br>
             </div>
             <br>
-	           <div class="ui blue basic button add_rph" data-id = `+i+`>
+	           <div class="ui blue basic button add_rph" data-id = `+i+` data-oper = 'add'>
 					    <i class="add icon"></i>Add RPH
 					   </div>
            </div>
@@ -138,14 +146,17 @@ function letak_jadual(){
 
 function add_rph(event){
 	init_form($(this).data('id'));
+	let oper = $(this).data('oper');
 	$('.ui.modal').modal({
 		onApprove:function($element){
-			if($("form#tambah_subjek").valid()) {
-  				// save_subjek(hari);
-				return true;
-			}else{
-				return false;
-			}
+			console.log($("form#tambah_rph").valid());
+			return false;
+			// if($("form#tambah_rph").valid()) {
+  		// 	save_rph(oper);
+			// 	return true;
+			// }else{
+			// 	return false;
+			// }
 		}
 	  }).modal('show');
 }
