@@ -30,29 +30,16 @@ $(document).ready(function () {
 		$('#rph_select,#sel_totop,#sel_print').hide();
 	});
 
-	
 	$("form#tambah_rph").validate({
-		ignore: [], //check jgk hidden
-		messages: {
-		    general_assesment: {
-      			required: "",
-		      	minlength: jQuery.validator.format("At least {0} characters required!")
-		    }
-		  },
-	  	invalidHandler: function(event, validator) {
-	  		// validator.errorList.forEach(function(e,i){
-	  		// 	if($(e.element).is("select")){
-	  		// 		$(e.element).parent().addClass('error');
-	  		// 	}
-	  		// });
-	  		// $(validator.errorList[0].element).focus();
-	  		// alert('Please fill all mandatory field');
-	  	},
-	  	errorPlacement: function(error, element) {
-	  		if (element.attr("name") == "sub_topik"||element.attr("name") == "topik_utama" ||element.attr("name") == "objektif" ) {
-		      error.insertAfter(element.parent());
-		    }
-	  	}
+		debug: true,
+  	onfocusout: false,
+  	errorPlacement: function(error, element) {
+	    if (element.attr("name") == "topik_utama" || element.attr("name") == "sub_topik" || element.attr("name") == "objektif" ) {
+	      error.insertAfter(element.parent());
+	    } else {
+	      error.insertAfter(element);
+	    }
+	  }
 	});
 
 	init_jadual();
@@ -71,6 +58,8 @@ function save_rph(oper){
 	},'json').fail(function(data) {
 
   }).done(function(data){
+  	$('.ui.modal').modal('hide');
+		emptyFormdata_div('form#tambah_rph');
 		init_jadual();
   });
 }
@@ -90,9 +79,9 @@ function init_jadual(){
 		});
 
 		letak_jadual();
-    }).fail(function(data){
-        alert('error');
-    });
+  }).fail(function(data){
+      alert('error');
+  });
 }
 
 function kosongkan_jadual(){
@@ -149,16 +138,17 @@ function add_rph(event){
 	let oper = $(this).data('oper');
 	$('.ui.modal').modal({
 		onApprove:function($element){
-			console.log($("form#tambah_rph").valid());
-			return false;
-			// if($("form#tambah_rph").valid()) {
-  		// 	save_rph(oper);
-			// 	return true;
-			// }else{
-			// 	return false;
-			// }
+			if($("form#tambah_rph").valid()) {
+  			save_rph(oper);
+				return false;
+			}else{
+				return false;
+			}
+		},
+		onDeny:function($element){
+			emptyFormdata_div('form#tambah_rph');
 		}
-	  }).modal('show');
+	}).modal('show');
 }
 
 function pop_weeks(weeks){
