@@ -9,12 +9,13 @@
     "license": "MIT",
     "require": {
         "php": "^7.2.5",
+        "barryvdh/laravel-dompdf": "^2.0",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^6.3",
+        "intervention/image": "dev-master",
         "laravel/framework": "^7.0",
-        "laravel/tinker": "^2.0",
-        "intervention/image": "dev-master"
+        "laravel/tinker": "^2.0"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

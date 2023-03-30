@@ -18,5 +18,6 @@ Route::get('/rph','rphController@show');
 Route::get('/rph_table','rphController@table');
 Route::post('/rph','rphController@form');
 Route::get('/setup_jadual','rphController@setup_jadual');
+Route::get('/rph_pdf','rphController@rph_pdf');
 
 

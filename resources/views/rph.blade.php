@@ -16,6 +16,34 @@
       color: grey;
       padding-left: 10px;
     }
+    .mytick{
+      position: absolute !important;
+      font-size: 110px !important;
+      right: -30px !important;
+      top: -20px !important;
+      overflow: visible !important;
+      color: green !important;
+      opacity: .5 !important;
+    }
+    .mytick2{
+      position: absolute !important;
+      font-size: 110px !important;
+      right: -30px !important;
+      top: -20px !important;
+      overflow: visible !important;
+      color: #ff7b7b !important;
+      opacity: .5 !important;
+    }
+    .mycard{
+      position: relative;
+      overflow: hidden;
+    }
+    .green_{
+      background: #e5ffe8 !important;
+    }
+    .blue_{
+      background: #fffac0 !important;
+    }
 @endsection
 
 @section('header')

@@ -21,6 +21,7 @@ $(document).ready(function () {
 	  	$('select#sel_weeks,#sel_year').parent().addClass('disabled');
 	  	$('#sel_tobtm').hide();
 			$('#rph_select,#sel_totop,#sel_print').show();
+			init_jadual();
   	}
 	});
 
@@ -33,6 +34,9 @@ $(document).ready(function () {
 	$("form#tambah_rph").validate({
 		debug: true,
   	onfocusout: false,
+  	invalidHandler: function(event, validator) {
+  		$(validator.errorList[0].element).focus();
+  	},
   	errorPlacement: function(error, element) {
 	    if (element.attr("name") == "topik_utama" || element.attr("name") == "sub_topik" || element.attr("name") == "objektif" ) {
 	      error.insertAfter(element.parent());
@@ -41,8 +45,6 @@ $(document).ready(function () {
 	    }
 	  }
 	});
-
-	init_jadual();
 });
 
 function save_rph(oper){
@@ -68,7 +70,8 @@ var jadual = [];
 function init_jadual(){
 	kosongkan_jadual();
 	var param = {
-		action: 'init_jadual'
+		action: 'init_jadual',
+		minggu: $('#sel_weeks_id').val()
 	}
 
 	$.get("./rph_table?"+$.param(param), function(data) {
@@ -95,6 +98,11 @@ function letak_jadual(){
 		let masa_dari = moment(e.masa_dari, 'HH:mm:ss').format('hh:mm A');
 		let masa_hingga = moment(e.masa_hingga, 'HH:mm:ss').format('hh:mm A');
 		let my_i = 0;
+		let oper_ = 'add';let title_='<i class="add icon"></i> Add RPH';
+		let icon_='<i class="exclamation circle icon mytick2"></i>';let warna='blue_';
+		if(e.idno!=null){
+			oper_='edit';title_='<i class="pen icon"></i> Edit RPH';icon_=`<i class="check circle outline icon mytick"></i>`;warna='green_';
+		}
 
 		switch(e.hari){
 			case 'ISNIN': cnt_1++; my_i = my_i+cnt_1; break;
@@ -103,11 +111,11 @@ function letak_jadual(){
 			case 'KHAMIS':  cnt_4++; my_i = my_i+cnt_4; break;
 			case 'JUMAAT':  cnt_5++; my_i = my_i+cnt_5; break;
 		}
-
 		$('div#'+e.hari+' div.swiper-wrapper').append(`
 			<div class="swiper-slide">
-          <div class="ui card">
-           <div class="content">
+          <div class="ui raised card `+warna+`">
+           <div class="content mycard">
+           `+icon_+`
             <div class="header"> `+my_i+`) `+e.subjek+`
             </div>
             <div class="description">
@@ -115,8 +123,8 @@ function letak_jadual(){
               MASA DARI : `+masa_dari+` – `+masa_hingga+` <br>
             </div>
             <br>
-	           <div class="ui blue basic button add_rph" data-id = `+i+` data-oper = 'add'>
-					    <i class="add icon"></i>Add RPH
+	           <div class="ui blue basic button add_rph" data-id = `+i+` data-oper = `+oper_+`>
+					    `+title_+`
 					   </div>
            </div>
           </div>
