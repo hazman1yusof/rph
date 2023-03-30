@@ -36,36 +36,41 @@
     background: #ffeac5;
 }
 
-.warna1{
+.theader{
+    background:darkorange;
+    color:white;
+}
 
+.warna1{
+    background: #cee8ff;
 }
 
 .warna2{
-    
+    background: #ffdada;
 }
 
 .warna3{
-    
+    background: #bdffc8;
 }
 
 .warna4{
-    
+    background: #aeffff;
 }
 
 .warna5{
-    
+    background: #ffffb3;
 }
 
 .warna6{
-    
+    background: #f4d1ff;
 }
 
 .warna7{
-    
+    background: #ffd3a6;
 }
 
 .warna8{
-    
+    background: #ff95df;
 }
 
 @endsection
@@ -88,7 +93,7 @@
         <br>
 
         <table class="jadual_tbl">
-            <tr>
+            <tr class="theader">
                 <th width="3%">BIL</th>
                 <th width="18%">SUBJEK</th>
                 <th width="8%">KELAS</th>
@@ -100,7 +105,7 @@
             </tr>
             <tr>
                 <th>1</th>
-                <th>MATEMATIK</th>
+                <th class="warna1">MATEMATIK</th>
                 <th>4A</th>
                 <th>11.30 – 12.30 PM</th>
                 <th class="left">KETAKSAMAAN LINEAR DALAM 2 PEMBOLEHUBAH</th>
@@ -110,28 +115,28 @@
             </tr>
             <tr>
                 <th >1</th>
-                <th >MATEMATIK</th>
+                <th class="warna2">MATEMATIK</th>
                 <th >4A</th>
                 <th >11.30 – 12.30 PM</th>
                 <th class="left">KETAKSAMAAN LINEAR DALAM 2 PEMBOLEHUBAH</th>
             </tr>
             <tr>
                 <th >1</th>
-                <th >MATEMATIK</th>
+                <th class="warna3">MATEMATIK</th>
                 <th >4A</th>
                 <th >11.30 – 12.30 PM</th>
                 <th class="left">KETAKSAMAAN LINEAR DALAM 2 PEMBOLEHUBAH</th>
             </tr>
             <tr>
                 <th >1</th>
-                <th >MATEMATIK</th>
+                <th class="warna4">MATEMATIK</th>
                 <th >4A</th>
                 <th >11.30 – 12.30 PM</th>
                 <th class="left">KETAKSAMAAN LINEAR DALAM 2 PEMBOLEHUBAH</th>
             </tr>
             <tr>
                 <th >1</th>
-                <th >MATEMATIK</th>
+                <th class="warna5">MATEMATIK</th>
                 <th >4A</th>
                 <th >11.30 – 12.30 PM</th>
                 <th class="left">KETAKSAMAAN LINEAR DALAM 2 PEMBOLEHUBAH</th>
@@ -141,7 +146,7 @@
             </tr>
             <tr>
                 <th >1</th>
-                <th >MATEMATIK</th>
+                <th class="warna6">MATEMATIK</th>
                 <th >4A</th>
                 <th >11.30 – 12.30 PM</th>
                 <th class="left">KETAKSAMAAN LINEAR DALAM 2 PEMBOLEHUBAH</th>
@@ -151,7 +156,7 @@
             </tr>
             <tr>
                 <th >1</th>
-                <th >MATEMATIK</th>
+                <th class="warna7">MATEMATIK</th>
                 <th >4A</th>
                 <th >11.30 – 12.30 PM</th>
                 <th class="left">KETAKSAMAAN LINEAR DALAM 2 PEMBOLEHUBAH</th>
@@ -161,7 +166,7 @@
             </tr>
             <tr>
                 <th >1</th>
-                <th >MATEMATIK</th>
+                <th class="warna8">MATEMATIK</th>
                 <th >4A</th>
                 <th >11.30 – 12.30 PM</th>
                 <th class="left">KETAKSAMAAN LINEAR DALAM 2 PEMBOLEHUBAH</th>
