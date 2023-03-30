@@ -236,7 +236,7 @@ class rphController extends Controller
     public function rph_pdf(Request $request){
 
         $pdf = PDF::loadView('rph_pdf');
-        // return $pdf->stream();
+        return $pdf->stream();
         
         return view('rph_pdf');
     }
