@@ -11,6 +11,7 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Illuminate\Support\Facades\Storage;
 use Image;
 use PDF;
+use Carbon\Carbon;
 
 class rphController extends Controller
 {   
@@ -113,6 +114,7 @@ class rphController extends Controller
                 'kelas' => (!empty($request->kelas))?$request->kelas:NULL,
                 'hari' => (!empty($request->hari))?$request->hari:NULL,
                 'minggu' => (!empty($request->minggu))?$request->minggu:NULL,
+                'date' => $this->getdays_fromweek($request->minggu,$request->hari),
                 'masa_dari' => (!empty($request->masa_dari))?$request->masa_dari:NULL,
                 'masa_hingga' => (!empty($request->masa_hingga))?$request->masa_hingga:NULL,
                 'topik_utama' => (!empty($request->topik_utama))?$request->topik_utama:NULL,
@@ -232,13 +234,122 @@ class rphController extends Controller
         return $weeks;
     }
 
+    public function getdays_fromweek($s_key,$hari){
+        $year = date_create('today')->format('Y');
+        $retval='';
+
+        $dtStart = date_create('2 jan '.$year)->modify('last Monday');
+        $dtEnd = date_create('last monday of Dec '.$year);
+
+        for($weeks = [];$dtStart <= $dtEnd;$dtStart->modify('+1 week')){
+          $key = $dtStart->format('W-Y');
+          $from = $dtStart->format('d/m/Y');
+          $to = (clone $dtStart)->modify('+6 Days')->format('d/m/Y');
+
+          if($key == $s_key){
+            $retval = $dtStart;
+            break;
+          }
+
+          $responce = new stdClass();
+          $responce->key = $key;
+          $responce->week = $from.' - '.$to;
+
+          array_push($weeks,$responce);
+        }
+
+        if($retval ==! ''){
+            switch ($hari) {
+                case 'ISNIN':
+                    return $retval;
+                    break;
+                case 'SELASA':
+                    return $retval->modify('+1 day');
+                    break;
+                case 'RABU':
+                    return $retval->modify('+2 day');
+                    break;
+                case 'KHAMIS':
+                    return $retval->modify('+3 day');
+                    break;
+                case 'JUMAAT':
+                    return $retval->modify('+4 day');
+                    break;
+            }
+        }
+
+        return NULL;
+    }
+
+    public function amik_warna($warna_kelas,$kelas){
+        foreach ($warna_kelas as $warna) {
+            if($kelas == $warna[0]){
+                return $warna[1];
+            }
+        }
+    }
+
 
     public function rph_pdf(Request $request){
+        $minggu = $request->minggu;
+        $minggu_ke = substr($minggu,0,2);
+        $jad_1=[];
+        $jad_2=[];
+        $jad_3=[];
+        $jad_4=[];
+        $jad_5=[];
+        $warna_kelas=[];
 
-        $pdf = PDF::loadView('rph_pdf');
+        $jadual = DB::table('rph.jadual')
+                        ->where('year_id','1')
+                        ->get();
+
+        foreach ($jadual->unique('kelas') as $key => $item){
+            array_push($warna_kelas,[$item->kelas,'warna'.$key]);
+        }
+
+        foreach ($jadual as $item) {
+            $item->date2 = Carbon::parse($this->getdays_fromweek($minggu,$item->hari))->isoformat('d MMMM Y');
+            $item->warna = $this->amik_warna($warna_kelas,$item->kelas);
+            switch ($item->hari) {
+                case 'ISNIN':
+                    array_push($jad_1,$item);
+                    break;
+                case 'SELASA':
+                    array_push($jad_2,$item);
+                    break;
+                case 'RABU':
+                    array_push($jad_3,$item);
+                    break;
+                case 'KHAMIS':
+                    array_push($jad_4,$item);
+                    break;
+                case 'JUMAAT':
+                    array_push($jad_5,$item);
+                    break;
+            }
+        }
+
+        $rphs = DB::table('rph.jadual')
+                    ->select('jadual.hari','jadual.subjek','jadual.kelas','jadual.masa_dari','jadual.masa_hingga','rph_main.idno','rph_main.minggu','rph_main.date','rph_main.topik_utama','rph_main.sub_topik','rph_main.objektif_id','rph_main.objektif','rph_main.aktiviti','rph_main.abm_1','rph_main.abm_2','rph_main.abm_3','rph_main.abm_4','rph_main.abm_5','rph_main.abm_lain2','rph_main.emk_1','rph_main.emk_2','rph_main.emk_3','rph_main.emk_4','rph_main.emk_5','rph_main.emk_6','rph_main.emk_7','rph_main.emk_8','rph_main.emk_9','rph_main.emk_10','rph_main.emk_11','rph_main.emk_12','rph_main.tpn_1','rph_main.tpn_2','rph_main.tpn_3','rph_main.tpn_4','rph_main.tpn_5','rph_main.tpn_6','rph_main.ppi_1','rph_main.ppi_2','rph_main.ppi_3','rph_main.ppi_4','rph_main.ppi_5','rph_main.ppi_6','rph_main.ppi_7','rph_main.ppi_8','rph_main.pdpc_1','rph_main.pdpc_2','rph_main.pdpc_3','rph_main.pdpc_4','rph_main.pdpc_5','rph_main.pdpc_6','rph_main.pdpc_7','rph_main.pdpc_8','rph_main.pdpc_lain2','rph_main.rlsi_1','rph_main.rlsi_2','rph_main.rlsi_3','rph_main.rlsi_4')
+                    ->join('rph.rph_main', function($join) use ($request){
+                        $join = $join->on('rph_main.subjek', '=', 'jadual.subjek')
+                                    ->on('rph_main.kelas', '=', 'jadual.kelas')
+                                    ->on('rph_main.hari', '=', 'jadual.hari')
+                                    ->where('rph_main.minggu', '=', $request->minggu)
+                                    ->on('rph_main.masa_dari', '=', 'jadual.masa_dari');
+                    })
+                    ->get();
+
+        foreach ($rphs as $item) {
+            $item->date2 = $item->hari.' , '.Carbon::parse($this->getdays_fromweek($minggu,$item->hari))->isoformat('d MMMM Y');
+            $item->warna = $this->amik_warna($warna_kelas,$item->kelas);
+        }
+
+        $pdf = PDF::loadView('rph_pdf',compact('jadual','jad_1','jad_2','jad_3','jad_4','jad_5','rphs','minggu','minggu_ke','warna_kelas'));
         return $pdf->stream();
         
-        return view('rph_pdf');
+        return view('rph_pdf',compact('jadual','jad_1','jad_2','jad_3','jad_4','jad_5','rphs','minggu','minggu_ke','warna_kelas'));
     }
 
 }

@@ -31,6 +31,10 @@ $(document).ready(function () {
 		$('#rph_select,#sel_totop,#sel_print').hide();
 	});
 
+	$('#sel_print').click(function(){
+		window.open("./rph_pdf?minggu="+$('#sel_weeks_id').val());
+	});
+
 	$("form#tambah_rph").validate({
 		debug: true,
   	onfocusout: false,
@@ -55,13 +59,21 @@ function save_rph(oper){
 
 	var tambah_rph = $("form#tambah_rph").serializeArray();
 
+	tambah_rph = tambah_rph.concat(
+        $('form#tambah_rph input[type=checkbox]:checked').map(
+        function() {
+            return {"name": this.name, "value": 1}
+        }).get()
+	);
+
 	$.post( "./rph?"+$.param(param),$.param(tambah_rph), function( data ){
 		
 	},'json').fail(function(data) {
 
   }).done(function(data){
   	$('.ui.modal').modal('hide');
-		emptyFormdata_div('form#tambah_rph');
+		$('form#tambah_rph .ui.checkbox').checkbox('set unchecked');
+		emptyFormdata('form#tambah_rph');
 		init_jadual();
   });
 }
@@ -154,7 +166,8 @@ function add_rph(event){
 			}
 		},
 		onDeny:function($element){
-			emptyFormdata_div('form#tambah_rph');
+			$('form#tambah_rph .ui.checkbox').checkbox('set unchecked');
+			emptyFormdata('form#tambah_rph');
 		}
 	}).modal('show');
 }
@@ -175,7 +188,11 @@ function init_form(id){
 	let entries = Object.entries(data);
 
 	entries.forEach(function(e,i){
-		var input=$("form#tambah_rph [name='"+e[0]+"']").val(e[1]);
+		if($("form#tambah_rph [name='"+e[0]+"']").prop('type') == 'checkbox' && e[1] == '1'){
+			$("form#tambah_rph [name='"+e[0]+"']").parent().checkbox('check');
+		}else{
+			$("form#tambah_rph [name='"+e[0]+"']").val(e[1]);
+		}
 	});
 	$("form#tambah_rph [name='minggu']").val($('#sel_weeks_id').val());
 	
