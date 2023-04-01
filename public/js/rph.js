@@ -1,4 +1,14 @@
 $(document).ready(function () {
+	
+	if(istablet){
+		const swiper = new Swiper('.swiper', {
+		  direction: 'horizontal',
+		  loop: false,
+		});	
+	}else{
+		$( "div.swiper" ).remove();
+	}
+
 	pop_weeks(weeks);
 	$('#sel_year').calendar({type: 'year'});
 
@@ -20,7 +30,7 @@ $(document).ready(function () {
   	}else{
 	  	$('select#sel_weeks,#sel_year').parent().addClass('disabled');
 	  	$('#sel_tobtm').hide();
-			$('#rph_select,#sel_totop,#sel_print').show();
+			$('#rph_select,#sel_totop,#sel_buts').show();
 			init_jadual();
   	}
 	});
@@ -28,14 +38,19 @@ $(document).ready(function () {
 	$('#sel_totop').click(function(){
   	$('select#sel_weeks,#sel_year').parent().removeClass('disabled');
   	$('#sel_tobtm').show();
-		$('#rph_select,#sel_totop,#sel_print').hide();
+		$('#rph_select,#sel_totop,#sel_buts').hide();
 	});
 
 	$('#sel_print').click(function(){
 		window.open("./rph_pdf?minggu="+$('#sel_weeks_id').val());
 	});
 
+	$('#sel_preview').click(function(){
+		window.open("./rph_prev?minggu="+$('#sel_weeks_id').val());
+	});
+
 	$("form#tambah_rph").validate({
+		ignore: ['search'],
 		debug: true,
   	onfocusout: false,
   	invalidHandler: function(event, validator) {
@@ -78,6 +93,7 @@ function save_rph(oper){
   });
 }
 
+var istablet = $(window).width() <= 768;
 var jadual = [];
 function init_jadual(){
 	kosongkan_jadual();
@@ -101,7 +117,11 @@ function init_jadual(){
 
 function kosongkan_jadual(){
 	jadual = [];
-	$('div.swiper-wrapper').html('');
+	if(istablet){
+		$('div.swiper-wrapper').html('');
+	}else{
+		$('div.haridiv').html('');
+	}
 }
 
 function letak_jadual(){
@@ -123,8 +143,28 @@ function letak_jadual(){
 			case 'KHAMIS':  cnt_4++; my_i = my_i+cnt_4; break;
 			case 'JUMAAT':  cnt_5++; my_i = my_i+cnt_5; break;
 		}
-		$('div#'+e.hari+' div.swiper-wrapper').append(`
-			<div class="swiper-slide">
+		if(istablet){
+			$('div#'+e.hari+' div.swiper-wrapper').append(`
+				<div class="swiper-slide">
+	          <div class="ui raised card `+warna+`">
+	           <div class="content mycard">
+	           `+icon_+`
+	            <div class="header"> `+my_i+`) `+e.subjek+`
+	            </div>
+	            <div class="description">
+	              KELAS : `+e.kelas+`<br>
+	              MASA DARI : `+masa_dari+` – `+masa_hingga+` <br>
+	            </div>
+	            <br>
+		           <div class="ui blue basic button add_rph" data-id = `+i+` data-oper = `+oper_+`>
+						    `+title_+`
+						   </div>
+	           </div>
+	          </div>
+	      </div>
+			`);
+		}else{
+			$('div#'+e.hari).append(`
           <div class="ui raised card `+warna+`">
            <div class="content mycard">
            `+icon_+`
@@ -140,8 +180,9 @@ function letak_jadual(){
 					   </div>
            </div>
           </div>
-      </div>
-		`);
+			`);
+		}
+		
 	});
 
 	$('span#1_cnt').text(cnt_1);
@@ -157,6 +198,7 @@ function add_rph(event){
 	init_form($(this).data('id'));
 	let oper = $(this).data('oper');
 	$('.ui.modal').modal({
+		autofocus:false,
 		onApprove:function($element){
 			if($("form#tambah_rph").valid()) {
   			save_rph(oper);
@@ -165,7 +207,8 @@ function add_rph(event){
 				return false;
 			}
 		},
-		onDeny:function($element){
+		onHidden:function($element){
+			$('form#tambah_rph .ui.dropdown').dropdown('restore defaults')
 			$('form#tambah_rph .ui.checkbox').checkbox('set unchecked');
 			emptyFormdata('form#tambah_rph');
 		}
@@ -190,6 +233,8 @@ function init_form(id){
 	entries.forEach(function(e,i){
 		if($("form#tambah_rph [name='"+e[0]+"']").prop('type') == 'checkbox' && e[1] == '1'){
 			$("form#tambah_rph [name='"+e[0]+"']").parent().checkbox('check');
+		}else if(e[0] == 'sub_topik' || e[0] == 'objektif' || e[0] == 'topik_utama' ){
+			$("form#tambah_rph [name='"+e[0]+"']").parent().dropdown('set selected',e[1]);
 		}else{
 			$("form#tambah_rph [name='"+e[0]+"']").val(e[1]);
 		}
@@ -197,8 +242,3 @@ function init_form(id){
 	$("form#tambah_rph [name='minggu']").val($('#sel_weeks_id').val());
 	
 }
-
-const swiper = new Swiper('.swiper', {
-  direction: 'horizontal',
-  loop: false,
-});

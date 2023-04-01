@@ -6,8 +6,14 @@
     .uppercase {
       text-transform: uppercase;
     }
+    @media only screen and (min-width: 768px) {
+      .container_sem{
+        margin: 0px 5%;
+      }
+    }
     .ui.card {
-      width: 90%;
+      display: inline-block;
+      margin: 10px;
     }
     .swiper-slide{
       padding: 5px;
@@ -44,6 +50,9 @@
     .blue_{
       background: #fffac0 !important;
     }
+    .fld_nomarginbtm{
+      margin-bottom: 0px !important;
+    }
 @endsection
 
 @section('header')
@@ -52,6 +61,24 @@
             {key:'none', week:'none'},
             @foreach ($weeks as $week)
                 {key:'{{$week->key}}', week:'{{$week->week}}'},
+            @endforeach
+        ];
+
+    var sub_detail_utama = [
+            @foreach ($UTAMA as $item)
+                {idno:'{{$item->idno}}', desc:'{{$item->desc}}'},
+            @endforeach
+        ];
+
+    var sub_detail_subtopik = [
+            @foreach ($SUBTOPIK as $item)
+                {idno:'{{$item->idno}}', desc:'{{$item->desc}}'},
+            @endforeach
+        ];
+
+    var sub_detail_objektif = [
+            @foreach ($OBJEKTIF as $item)
+                {idno:'{{$item->idno}}', desc:'{{$item->desc}}'},
             @endforeach
         ];
     
@@ -65,7 +92,7 @@
 <form class="ui form" id="rph_year_week">
  <div class="ui inverted dimmer"></div>
   <div class="field">
-    <label for=''>Select Year</label>
+    <label>Select Year</label>
     <div class="ui calendar" id="sel_year">
       <div class="ui input left icon">
         <i class="calendar icon"></i>
@@ -75,7 +102,7 @@
   </div>
 
   <div class="field">
-    <label for=''>Select weeks in Year</label>
+    <label>Select weeks in Year</label>
     <select class="ui long dropdown" id="sel_weeks" required>
     </select>
   </div>
@@ -83,7 +110,10 @@
  <p><b><span id="sel_weeks_p"></span></b></p>
  <button type="button" class="fluid ui button green" id="sel_tobtm">Select</button>
  <button type="button" class="fluid ui button red" id="sel_totop" style="display:none;">Re - Select</button>
- <button type="button" class="fluid ui button blue" id="sel_print" style="display:none;margin-top: 10px;">PDF</button>
+ <div class="ui buttons fluid " style="display:none;margin-top: 10px;" id="sel_buts">
+   <button type="button" class="ui button blue" id="sel_print" >PDF</button>
+   <button type="button" class="ui orange button" id="sel_preview">Preview</button>
+ </div>
 </form>
 
 <div class="row" id="rph_select" style="display:none;">
@@ -92,7 +122,7 @@
       <div class="ui segment header">
         Isnin<span class="kelas_cnt"><span id="1_cnt"></span> Kelas</span>
       </div>
-      <div class="ui secondary segment" id="ISNIN">
+      <div class="ui secondary segment haridiv" id="ISNIN">
         <div class="swiper">
           <div class="swiper-wrapper">
           </div>
@@ -104,7 +134,7 @@
       <div class="ui segment header">
         Selasa<span class="kelas_cnt"><span id="2_cnt"></span> Kelas</span>
       </div>
-      <div class="ui secondary segment" id="SELASA">
+      <div class="ui secondary segment haridiv" id="SELASA">
         <div class="swiper">
           <div class="swiper-wrapper">
           </div>
@@ -116,7 +146,7 @@
       <div class="ui segment header">
         Rabu<span class="kelas_cnt"><span id="3_cnt"></span> Kelas</span>
       </div>
-      <div class="ui secondary segment" id="RABU">
+      <div class="ui secondary segment haridiv" id="RABU">
         <div class="swiper">
           <div class="swiper-wrapper">
           </div>
@@ -128,7 +158,7 @@
       <div class="ui segment header">
         Khamis<span class="kelas_cnt"><span id="4_cnt"></span> Kelas</span>
       </div>
-      <div class="ui secondary segment" id="KHAMIS">
+      <div class="ui secondary segment haridiv" id="KHAMIS">
         <div class="swiper">
           <div class="swiper-wrapper">
           </div>
@@ -140,7 +170,7 @@
       <div class="ui segment header">
         Jumaat<span class="kelas_cnt"><span id="5_cnt"></span> Kelas</span>
       </div>
-      <div class="ui secondary segment" id="JUMAAT">
+      <div class="ui secondary segment haridiv" id="JUMAAT">
         <div class="swiper">
           <div class="swiper-wrapper">
           </div>
@@ -168,31 +198,31 @@
           <div class="ui segment">
             <div class="two fields">
               <div class="field">
-                <label for=''>SUBJEK</label>
+                <label for='subjek'>SUBJEK</label>
                 <input type="text" name="subjek" id="subjek" class="uppercase" readonly>
               </div>
               <div class="field">
-                <label for=''>KELAS</label>
+                <label for='kelas'>KELAS</label>
                 <input type="text" name="kelas" id="kelas" class="uppercase" readonly>
               </div>
           </div>
           <div class="two fields">
               <div class="field">
-                <label for=''>HARI</label>
+                <label for='hari'>HARI</label>
                 <input type="text" name="hari" id="hari" readonly>
               </div>
               <div class="field">
-                <label for=''>MINGGU</label>
+                <label for='minggu'>MINGGU</label>
                 <input type="text" name="minggu" id="minggu" readonly>
               </div>
           </div>
           <div class="two fields">
               <div class="field">
-                <label for=''>MASA DARI</label>
+                <label for='masa_dari'>MASA DARI</label>
                 <input type="text" name="masa_dari" id="masa_dari" readonly>
               </div>
               <div class="field">
-                <label for=''>MASA HINGGA</label>
+                <label for='masa_hingga'>MASA HINGGA</label>
                 <input type="text" name="masa_hingga" id="masa_hingga" readonly>
               </div>
           </div>
@@ -200,28 +230,46 @@
       </div>
       
       <div class="field">
-        <label for=''>TOPIK UTAMA</label>
-        <div class="ui icon input">
-          <input type="text" name="topik_utama" id="topik_utama" required>
-          <i class="inverted circular search link icon"></i>
+        <label>TOPIK UTAMA</label>
+        <div class="ui fluid search selection long dropdown">
+          <input type="hidden" name="topik_utama">
+          <i class="dropdown icon"></i>
+          <div class="default text">TOPIK UTAMA</div>
+            <div class="menu">
+              @foreach ($UTAMA as $item)
+              <div class="item" data-value="{{$item->idno}}">{{$item->desc}}</div>
+              @endforeach
+            </div>
         </div>
       </div>
       <div class="field">
-        <label for=''>SUB TOPIK</label>
-        <div class="ui icon input">
-          <input type="text" name="sub_topik" id="sub_topik" required>
-          <i class="inverted circular search link icon"></i>
+        <label for='sub_topik'>SUB TOPIK</label>
+        <div class="ui fluid search selection long dropdown">
+          <input type="hidden" name="sub_topik">
+          <i class="dropdown icon"></i>
+          <div class="default text">SUB TOPIK</div>
+            <div class="menu">
+              @foreach ($SUBTOPIK as $item)
+              <div class="item" data-value="{{$item->idno}}">{{$item->desc}}</div>
+              @endforeach
+            </div>
         </div>
       </div>
       <div class="field">
-        <label for=''>OBJEKTIF PEMBELAJARAN / KRITERIA KEJAYAAN</label>
-        <div class="ui icon input">
-          <input type="text" name="objektif" id="objektif" required>
-          <i class="inverted circular search link icon"></i>
+        <label for='objektif'>OBJEKTIF PEMBELAJARAN / KRITERIA KEJAYAAN</label>
+        <div class="ui fluid search selection long dropdown">
+          <input type="hidden" name="objektif">
+          <i class="dropdown icon"></i>
+          <div class="default text">OBJEKTIF PEMBELAJARAN</div>
+            <div class="menu">
+              @foreach ($OBJEKTIF as $item)
+              <div class="item" data-value="{{$item->idno}}">{{$item->desc}}</div>
+              @endforeach
+            </div>
         </div>
       </div>
       <div class="field">
-        <label for=''>AKTIVITI PEMBELAJARAN & PEMUDAHCARAAN</label>
+        <label for='aktiviti'>AKTIVITI PEMBELAJARAN & PEMUDAHCARAAN</label>
         <textarea type="text" name="aktiviti" id="aktiviti" required></textarea>
       </div>
       <div class="ui segments">
@@ -519,6 +567,31 @@
             REFLEKSI
           </div>
           <div class="ui secondary segment">
+            bilangan murid dapat menguasai objektif pembelajaran dan diberi latihan pengukuhan
+            <div class="inline fields">
+              <div class="field fld_nomarginbtm">
+                <input placeholder="bil. murid menguasai" type="text" name="bilmg_1">
+              </div>
+              <div class="field fld_nomarginbtm">
+                <span style="padding: 0px 3px ;">/</span>
+              </div>
+              <div class="field fld_nomarginbtm">
+                <input placeholder="dari jumlah murid" type="text" name="bilmg_1"> 
+              </div>
+            </div>
+            bilangan pelajar tidak menguasai objektif pembelajaran dan diberi latihan pemulihan
+            <div class="inline fields">
+              <div class="field fld_nomarginbtm">
+                <input placeholder="bil. murid menguasai" type="text" name="bilxmg_1">
+              </div>
+              <div class="field fld_nomarginbtm">
+                <span style="padding: 0px 3px ;">/</span>
+              </div>
+              <div class="field fld_nomarginbtm">
+                <input placeholder="dari jumlah murid" type="text" name="bilxmg_1"> 
+              </div>
+            </div>
+            <br><br>
             Aktiviti pengajaran dan pembelajaran ditangguhkan kerana : <br>
             <div class="inline fields">
                 <div class="field">

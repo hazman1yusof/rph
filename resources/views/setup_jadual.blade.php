@@ -6,8 +6,14 @@
     .uppercase {
       text-transform: uppercase;
     }
+    @media only screen and (min-width: 768px) {
+      .container_sem{
+        margin: 0px 5%;
+      }
+    }
     .ui.card {
-      width: 90%;
+      display: inline-block;
+      margin: 10px;
     }
     .swiper-slide{
       padding: 5px;
@@ -18,76 +24,106 @@
     }
 @endsection
 
+@section('header')
+<script>
+    var jadual_ids = [
+            @foreach ($jadual_ids as $item)
+                {idno:'{{$item->idno}}', effdate:'{{$item->effdate}}', desc:'{{$item->desc}}'},
+            @endforeach
+        ];
+</script>
+@endsection
+
 @section('content')
 
 <h4>Setup Jadual</h4>
 
-<div class="ui red segments">
-  <div class="ui segment header">
-    Isnin<span class="kelas_cnt"><span id="1_cnt"></span> Kelas</span>
-    <i id="add_1" data-hari="isnin" class="right floated link plus icon blue" data-content="Tambah " data-variation="small"></i>
+<div class="row" id="div_sel_year_id">
+  <form class="ui form" id="form_sel_year_id">
+      <button class="ui small teal button right floated" type="button" id="add_jadual" style="margin:10px">
+        <i class="plus icon"></i>Tambah Jadual Baru
+      </button>
+    <div class="field">
+      <label>Pilih Jadual</label>
+      <select class="ui long dropdown" id="sel_year_id" required>
+        @foreach ($jadual_ids as $item)
+        <option value="{{$item->idno}}">{{$item->desc}}</option>
+        @endforeach
+      </select>
+    </div>
+  </form>
+  <br>
+  <button class="fluid ui green button" id="sel_jad_btn">Select Jadual</button>
+</div>
+
+<div class="row" id="rph_select" style="display:none;">
+  <div class="ui red segments">
+    <div class="ui segment header">
+      Isnin<span class="kelas_cnt"><span id="1_cnt"></span> Kelas</span>
+      <i id="add_1" data-hari="isnin" class="right floated link plus icon blue" data-variation="small"></i>
+    </div>
+    <div class="ui secondary segment haridiv" id="ISNIN">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="ui secondary segment" id="ISNIN">
-    <div class="swiper">
-      <div class="swiper-wrapper">
+
+  <div class="ui red segments">
+    <div class="ui segment header">
+      Selasa<span class="kelas_cnt"><span id="2_cnt"></span> Kelas</span>
+      <i id="add_2" data-hari="selasa" class="right floated link plus icon blue" data-variation="small"></i>
+    </div>
+    <div class="ui secondary segment haridiv" id="SELASA">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui red segments">
+    <div class="ui segment header">
+      Rabu<span class="kelas_cnt"><span id="3_cnt"></span> Kelas</span>
+      <i id="add_3" data-hari="rabu" class="right floated link plus icon blue" data-variation="small"></i>
+    </div>
+    <div class="ui secondary segment haridiv" id="RABU">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui red segments">
+    <div class="ui segment header">
+      Khamis<span class="kelas_cnt"><span id="4_cnt"></span> Kelas</span>
+      <i id="add_4" data-hari="khamis" class="right floated link plus icon blue" data-variation="small"></i>
+    </div>
+    <div class="ui secondary segment haridiv" id="KHAMIS">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui red segments">
+    <div class="ui segment header">
+      Jumaat<span class="kelas_cnt"><span id="5_cnt"></span> Kelas</span>
+      <i id="add_5" data-hari="jumaat" class="right floated link plus icon blue" data-variation="small"></i>
+    </div>
+    <div class="ui secondary segment haridiv" id="JUMAAT">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="ui red segments">
-  <div class="ui segment header">
-    Selasa<span class="kelas_cnt"><span id="2_cnt"></span> Kelas</span>
-    <i id="add_2" data-hari="selasa" class="right floated link plus icon blue" data-content="Tambah " data-variation="small"></i>
-  </div>
-  <div class="ui secondary segment" id="SELASA">
-    <div class="swiper">
-      <div class="swiper-wrapper">
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="ui red segments">
-  <div class="ui segment header">
-    Rabu<span class="kelas_cnt"><span id="3_cnt"></span> Kelas</span>
-    <i id="add_3" data-hari="rabu" class="right floated link plus icon blue" data-content="Tambah " data-variation="small"></i>
-  </div>
-  <div class="ui secondary segment" id="RABU">
-    <div class="swiper">
-      <div class="swiper-wrapper">
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="ui red segments">
-  <div class="ui segment header">
-    Khamis<span class="kelas_cnt"><span id="4_cnt"></span> Kelas</span>
-    <i id="add_4" data-hari="khamis" class="right floated link plus icon blue" data-content="Tambah " data-variation="small"></i>
-  </div>
-  <div class="ui secondary segment" id="KHAMIS">
-    <div class="swiper">
-      <div class="swiper-wrapper">
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="ui red segments">
-  <div class="ui segment header">
-    Jumaat<span class="kelas_cnt"><span id="5_cnt"></span> Kelas</span>
-    <i id="add_5" data-hari="jumaat" class="right floated link plus icon blue" data-content="Tambah " data-variation="small"></i>
-  </div>
-  <div class="ui secondary segment" id="JUMAAT">
-    <div class="swiper">
-      <div class="swiper-wrapper">
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="ui modal">
+<div class="ui modal" id="modal_jadual">
   <i class="close icon"></i>
   <div class="header">
     Jadual Subjek
@@ -119,6 +155,33 @@
       Cancel
     </button>
     <button class="ui positive right labeled icon button" id="save">
+      Save
+      <i class="checkmark icon"></i>
+    </button>
+  </div>
+</div>
+
+<div class="ui mini modal" id="modal_year_id">
+  <div class="header">Tmabah Jadual Baru</div>
+  <div class="content">
+    <form class="ui form" id="form_year_id">
+      <input type="hidden" name="idno">
+      <input name="_token" value="{{ csrf_token() }}" type="hidden">
+      <div class="field">
+        <label>Nama Jadual</label>
+        <input type="text" name="desc" id="desc" required>
+      </div>
+      <div class="field">
+        <label>Effective Date</label>
+        <input type="date" name="effdate" id="effdate" required>
+      </div>
+    </form>
+  </div>
+  <div class="actions">
+    <button class="ui deny button" id="cancel2">
+      Cancel
+    </button>
+    <button class="ui positive right labeled icon button" id="save2">
       Save
       <i class="checkmark icon"></i>
     </button>

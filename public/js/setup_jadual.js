@@ -1,4 +1,14 @@
 $(document).ready(function () {
+	
+	if(istablet){
+		const swiper = new Swiper('.swiper', {
+		  direction: 'horizontal',
+		  loop: false,
+		});	
+	}else{
+		$( "div.swiper" ).remove();
+	}
+
 	$("form#tambah_subjek").validate({
 		ignore: [], //check jgk hidden
 		messages: {
@@ -28,7 +38,7 @@ $(document).ready(function () {
 		let hari = $(this).data('hari');
   		oper = 'add';
 		emptyFormdata([],'form#tambah_subjek');
-		$('.ui.modal').modal({
+		$('.ui.modal#modal_jadual').modal({
 			onApprove:function($element){
 				if($("form#tambah_subjek").valid()) {
 	  				save_subjek(hari);
@@ -40,9 +50,24 @@ $(document).ready(function () {
 		  }).modal('show');
 	});
 
+	$('#add_jadual').click(function(){
+		emptyFormdata([],'form#form_year_id');
+		$('.ui.modal#modal_year_id').modal({
+			onApprove:function($element){
+				if($("form#form_year_id").valid()) {
+	  				save_year_id('add');
+					return true;
+				}else{
+					return false;
+				}
+			}
+		}).modal('show');
+	});
+
 	init_jadual();
 });
 
+var istablet = $(window).width() <= 768;
 var oper='add';
 function save_subjek(hari){
 	var param = {
@@ -57,9 +82,25 @@ function save_subjek(hari){
 		
 	},'json').fail(function(data) {
 
-    }).done(function(data){
-		init_jadual();
-    });
+  }).done(function(data){
+	init_jadual();
+  });
+}
+
+function save_year_id(oper){
+	var param = {
+		action: 'save_year_id',
+		oper:oper
+	}
+
+	var year_id = $("form#form_year_id").serializeArray();
+
+	$.post( "./rph?"+$.param(param),$.param(year_id), function( data ){
+		
+	},'json').fail(function(data) {
+  }).done(function(data){
+  });
+
 }
 
 var jadual = [];
@@ -84,7 +125,11 @@ function init_jadual(){
 
 function kosongkan_jadual(){
 	jadual = [];
-	$('div.swiper-wrapper').html('');
+	if(istablet){
+		$('div.swiper-wrapper').html('');
+	}else{
+		$('div.haridiv').html('');
+	}
 }
 
 function letak_jadual(){
@@ -101,23 +146,40 @@ function letak_jadual(){
 			case 'KHAMIS':  cnt_4++; my_i = my_i+cnt_4; break;
 			case 'JUMAAT':  cnt_5++; my_i = my_i+cnt_5; break;
 		}
-
-		$('div#'+e.hari+' div.swiper-wrapper').append(`
-			<div class="swiper-slide">
-	            <div class="ui card">
-	             <div class="content">
-	              <div class="header"> `+my_i+`) `+e.subjek+`
-	                <i data-id="`+i+`" class="del_ right floated trash icon red"></i>
-	                <i data-id="`+i+`" class="edit_ right floated link pen icon blue"></i>
-	              </div>
-	              <div class="description">
-	                KELAS : `+e.kelas+`<br>
-	                MASA DARI : `+masa_dari+` – `+masa_hingga+` <br>
-	              </div>
-	             </div>
-	            </div>
-	        </div>
-		`);
+		if(istablet){
+			$('div#'+e.hari+' div.swiper-wrapper').append(`
+				<div class="swiper-slide">
+		            <div class="ui card">
+		             <div class="content">
+		              <div class="header"> `+my_i+`) `+e.subjek+`
+		                <i data-id="`+i+`" class="del_ right floated trash icon red"></i>
+		                <i data-id="`+i+`" class="edit_ right floated link pen icon blue"></i>
+		              </div>
+		              <div class="description">
+		                KELAS : `+e.kelas+`<br>
+		                MASA DARI : `+masa_dari+` – `+masa_hingga+` <br>
+		              </div>
+		             </div>
+		            </div>
+		        </div>
+			`);
+		}else{
+			$('div#'+e.hari).append(`
+          <div class="ui card">
+           <div class="content">
+            <div class="header"> `+my_i+`) `+e.subjek+`
+              <i data-id="`+i+`" class="del_ right floated trash icon red"></i>
+              <i data-id="`+i+`" class="edit_ right floated link pen icon blue"></i>
+            </div>
+            <div class="description">
+              KELAS : `+e.kelas+`<br>
+              MASA DARI : `+masa_dari+` – `+masa_hingga+` <br>
+            </div>
+           </div>
+          </div>
+			`);
+		}
+		
 	});
 
 	$('span#1_cnt').text(cnt_1);
@@ -163,7 +225,7 @@ function edit_jadual(event){
 	});
 
 	oper = 'edit';
-	$('.ui.modal').modal({
+	$('.ui.modal#modal_jadual').modal({
 		onApprove:function($element){
 			if($("form#tambah_subjek").valid()) {
 					save_subjek(data.hari);
@@ -174,8 +236,3 @@ function edit_jadual(event){
 		}
 	}).modal('show');
 }
-
-const swiper = new Swiper('.swiper', {
-  direction: 'horizontal',
-  loop: false,
-});
