@@ -1,5 +1,5 @@
 $(document).ready(function () {
-	
+	year_id_sel_init();
 	if(istablet){
 		const swiper = new Swiper('.swiper', {
 		  direction: 'horizontal',
@@ -64,7 +64,52 @@ $(document).ready(function () {
 		}).modal('show');
 	});
 
-	init_jadual();
+	$('#edit_jadual').click(function(){
+		emptyFormdata([],'form#form_year_id');
+		year_id_sel_data.data.forEach(function(e,i){
+			if(e.idno == $("#sel_year_id").val()){
+				$("form#form_year_id [name='idno']").val(e.idno);
+				$("form#form_year_id [name='desc']").val(e.desc);
+				$("form#form_year_id [name='effdate']").val(e.effdate);
+			}
+		});
+		$('.ui.modal#modal_year_id').modal({
+			onApprove:function($element){
+				if($("form#form_year_id").valid()) {
+	  				save_year_id('edit');
+					return true;
+				}else{
+					return false;
+				}
+			}
+		}).modal('show');
+	});
+	
+	$('#delete_jadual').click(function(){
+		if (confirm("Are you sure to delete?") == true) {
+		  save_year_id('del');
+		}
+	});
+
+	$('#sel_jad_btn').click(function(){
+		if($('#sel_year_id').val() == ''){
+			alert('Please pick a jadual')
+		}else{
+			init_jadual_setting();
+			$('#rph_select').show();
+			$('#div_sel_year_id').dimmer('show');
+		}
+	});
+	$('#div_sel_year_id').dimmer({
+    closable: false
+  });
+
+	$('#resel_jad_btn').click(function(){
+		$('#div_sel_year_id').dimmer('hide');
+		$('#rph_select').hide();
+	});
+
+  
 });
 
 var istablet = $(window).width() <= 768;
@@ -83,7 +128,7 @@ function save_subjek(hari){
 	},'json').fail(function(data) {
 
   }).done(function(data){
-	init_jadual();
+		init_jadual_setting();
   });
 }
 
@@ -92,22 +137,33 @@ function save_year_id(oper){
 		action: 'save_year_id',
 		oper:oper
 	}
-
 	var year_id = $("form#form_year_id").serializeArray();
+
+	if(oper == 'del'){
+		param.idno = $("#sel_year_id").val();
+		param._token=$("#_token").val();
+		year_id=null;
+	}
+
 
 	$.post( "./rph?"+$.param(param),$.param(year_id), function( data ){
 		
 	},'json').fail(function(data) {
   }).done(function(data){
+  	if($('#rph_select').is(":visible")){
+  		$('#resel_jad_btn').click();
+  	}
+  	year_id_sel_init();
   });
 
 }
 
 var jadual = [];
-function init_jadual(){
+function init_jadual_setting(){
 	kosongkan_jadual();
 	var param = {
-		action: 'init_jadual'
+		action: 'init_jadual_setting',
+		year_id: $('#sel_year_id').val()
 	}
 
 	$.get("./rph_table?"+$.param(param), function(data) {
@@ -209,9 +265,9 @@ function delete_jadual(event){
 			
 		},'json').fail(function(data) {
 
-	    }).done(function(data){
-			init_jadual();
-	    });
+	  }).done(function(data){
+			init_jadual_setting();
+	  });
 	}
 }
 
@@ -235,4 +291,39 @@ function edit_jadual(event){
 			}
 		}
 	}).modal('show');
+}
+
+var year_id_sel_data = [];
+function year_id_sel_init(){
+	let datenow = moment();
+	$('#sel_year_id').html(`<option value="">Pilih Jadual</option>`);
+  
+
+  var param = {
+		action: 'year_id_sel_init'
+	}
+
+	$.get("./rph_table?"+$.param(param), function(data) {
+
+	},'json').done(function(data) {
+		year_id_sel_data = data;
+		let lastdate = null;
+		let idtopick = null;
+		data.data.forEach(function(e,i){
+	  	let currdate = moment(e.effdate);
+	  	if(currdate.isSameOrBefore() && lastdate==null){
+	  		lastdate = currdate;
+	  		idtopick = e.idno;
+	  	}else if(currdate.isSameOrBefore() && lastdate!=null){
+	  		if(currdate.isAfter(lastdate)){
+	  			lastdate = currdate;
+	  			idtopick = e.idno;
+	  		}
+	  	}
+	  	$("#sel_year_id").append(`<option value="`+e.idno+`">`+e.desc+`</option>`);
+	  });
+		$("#sel_year_id").val(idtopick);
+  }).fail(function(data){
+      alert('error');
+  });
 }

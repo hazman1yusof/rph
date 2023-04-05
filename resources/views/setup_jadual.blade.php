@@ -26,11 +26,6 @@
 
 @section('header')
 <script>
-    var jadual_ids = [
-            @foreach ($jadual_ids as $item)
-                {idno:'{{$item->idno}}', effdate:'{{$item->effdate}}', desc:'{{$item->desc}}'},
-            @endforeach
-        ];
 </script>
 @endsection
 
@@ -38,7 +33,8 @@
 
 <h4>Setup Jadual</h4>
 
-<div class="row" id="div_sel_year_id">
+<div class="row" id="div_sel_year_id" style="margin-bottom: 30px;">
+  <div class="ui inverted dimmer"></div>
   <form class="ui form" id="form_sel_year_id">
       <button class="ui small teal button right floated" type="button" id="add_jadual" style="margin:10px">
         <i class="plus icon"></i>Tambah Jadual Baru
@@ -46,9 +42,7 @@
     <div class="field">
       <label>Pilih Jadual</label>
       <select class="ui long dropdown" id="sel_year_id" required>
-        @foreach ($jadual_ids as $item)
-        <option value="{{$item->idno}}">{{$item->desc}}</option>
-        @endforeach
+        <option value="">Pilih Jadual</option>
       </select>
     </div>
   </form>
@@ -57,6 +51,11 @@
 </div>
 
 <div class="row" id="rph_select" style="display:none;">
+  <div class="ui buttons fluid " style="margin-top: 10px;margin-bottom: 10px;" id="sel_buts">
+    <button type="button" class="ui blue button" id="edit_jadual">Edit Jadual</button>
+    <button type="button" class="ui red button" id="delete_jadual">Delete Jadual</button>
+ </div>
+  <button class="fluid ui orange button" id="resel_jad_btn">Re-Select Jadual</button>
   <div class="ui red segments">
     <div class="ui segment header">
       Isnin<span class="kelas_cnt"><span id="1_cnt"></span> Kelas</span>

@@ -26,7 +26,12 @@ class rphController extends Controller
             case 'init_jadual':
                 return $this->init_jadual($request);
                 break;
-
+            case 'init_jadual_setting':
+                return $this->init_jadual_setting($request);
+                break;
+            case 'year_id_sel_init':
+                return $this->year_id_sel_init($request);
+                break;
             default:
                 return 'error happen..';
         }
@@ -74,10 +79,7 @@ class rphController extends Controller
     }
 
     public function setup_jadual(Request $request){
-        $jadual_ids = DB::table('rph.year_id')
-                        ->get();
-
-        return view('setup_jadual',compact('jadual_ids'));
+        return view('setup_jadual');
     }
 
     public function save_jadual(Request $request){
@@ -135,7 +137,7 @@ class rphController extends Controller
             }else if($request->oper == 'edit'){
                 DB::table('rph.year_id')
                     ->where('idno',$request->idno)
-                    ->insert([
+                    ->update([
                         'effdate' => $request->effdate,
                         'desc' => $request->desc
                     ]);
@@ -156,6 +158,15 @@ class rphController extends Controller
 
             return response($e->getMessage(), 500);
         }
+    }
+
+    public function year_id_sel_init(Request $request){
+        $jadual_ids = DB::table('rph.year_id')
+                        ->get();
+
+        $responce = new stdClass();
+        $responce->data = $jadual_ids;
+        return json_encode($responce);
     }
 
     public function save_rph(Request $request){
@@ -249,12 +260,26 @@ class rphController extends Controller
         }
     }
 
+    public function init_jadual_setting(Request $request){
+
+        $table = DB::table('rph.jadual')
+                    ->select('jadual.hari','jadual.subjek','jadual.kelas','jadual.masa_dari','jadual.masa_hingga')
+                    ->where('jadual.year_id', '=', $request->year_id)
+                    ->get();
+
+        $responce = new stdClass();
+        $responce->data = $table;
+        return json_encode($responce);
+    }
+
     public function init_jadual(Request $request){
 
         $table = DB::table('rph.jadual')
                     ->select('jadual.hari','jadual.subjek','jadual.kelas','jadual.masa_dari','jadual.masa_hingga','rph_main.idno','rph_main.minggu','rph_main.topik_utama','rph_main.sub_topik','rph_main.objektif','rph_main.aktiviti','rph_main.abm_1','rph_main.abm_2','rph_main.abm_3','rph_main.abm_4','rph_main.abm_5','rph_main.abm_lain2','rph_main.emk_1','rph_main.emk_2','rph_main.emk_3','rph_main.emk_4','rph_main.emk_5','rph_main.emk_6','rph_main.emk_7','rph_main.emk_8','rph_main.emk_9','rph_main.emk_10','rph_main.emk_11','rph_main.emk_12','rph_main.tpn_1','rph_main.tpn_2','rph_main.tpn_3','rph_main.tpn_4','rph_main.tpn_5','rph_main.tpn_6','rph_main.ppi_1','rph_main.ppi_2','rph_main.ppi_3','rph_main.ppi_4','rph_main.ppi_5','rph_main.ppi_6','rph_main.ppi_7','rph_main.ppi_8','rph_main.pdpc_1','rph_main.pdpc_2','rph_main.pdpc_3','rph_main.pdpc_4','rph_main.pdpc_5','rph_main.pdpc_6','rph_main.pdpc_7','rph_main.pdpc_8','rph_main.pdpc_lain2','rph_main.rlsi_1','rph_main.rlsi_2','rph_main.rlsi_3','rph_main.rlsi_4')
+                    ->where('jadual.year_id', '=', $request->year_id)
                     ->leftJoin('rph.rph_main', function($join) use ($request){
-                        $join = $join->on('rph_main.subjek', '=', 'jadual.subjek')
+                        $join = $join->on('rph_main.year_id', '=', 'jadual.year_id')
+                                    ->on('rph_main.subjek', '=', 'jadual.subjek')
                                     ->on('rph_main.kelas', '=', 'jadual.kelas')
                                     ->on('rph_main.hari', '=', 'jadual.hari')
                                     ->where('rph_main.minggu', '=', $request->minggu)
