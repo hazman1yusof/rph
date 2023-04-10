@@ -32,6 +32,9 @@ class rphController extends Controller
             case 'year_id_sel_init':
                 return $this->year_id_sel_init($request);
                 break;
+            case 'get_weeks':
+                return $this->get_weeks($request);
+                break;
             default:
                 return 'error happen..';
         }
@@ -58,7 +61,6 @@ class rphController extends Controller
 
     public function show(Request $request){
         $year = date_create('today')->format('Y');
-        $weeks = $this->getWeek();
 
         $UTAMA = DB::table('rph.subjek_detail')
                         ->where('subjek','MATEMATIK')
@@ -75,7 +77,7 @@ class rphController extends Controller
                         ->where('type','OBJEKTIF')
                         ->get();
 
-        return view('rph',compact('year','weeks','UTAMA','SUBTOPIK','OBJEKTIF'));
+        return view('rph',compact('year','UTAMA','SUBTOPIK','OBJEKTIF'));
     }
 
     public function setup_jadual(Request $request){
@@ -176,12 +178,12 @@ class rphController extends Controller
         try {
 
             $array_=[
-                'year_id' => (!empty($request->year_id))?$request->subjek:NULL,
+                'year_id' => (!empty($request->year_id))?$request->year_id:NULL,
                 'subjek' => (!empty($request->subjek))?$request->subjek:NULL,
                 'kelas' => (!empty($request->kelas))?$request->kelas:NULL,
+                'date' => (!empty($request->date))?$request->date:NULL,
                 'hari' => (!empty($request->hari))?$request->hari:NULL,
                 'minggu' => (!empty($request->minggu))?$request->minggu:NULL,
-                'date' => $this->getdays_fromweek($request->minggu,$request->hari),
                 'masa_dari' => (!empty($request->masa_dari))?$request->masa_dari:NULL,
                 'masa_hingga' => (!empty($request->masa_hingga))?$request->masa_hingga:NULL,
                 'topik_utama' => (!empty($request->topik_utama))?$request->topik_utama:NULL,
@@ -232,7 +234,11 @@ class rphController extends Controller
                 'rlsi_1' => (!empty($request->rlsi_1))?$request->rlsi_1:NULL,
                 'rlsi_2' => (!empty($request->rlsi_2))?$request->rlsi_2:NULL,
                 'rlsi_3' => (!empty($request->rlsi_3))?$request->rlsi_3:NULL,
-                'rlsi_4' => (!empty($request->rlsi_4))?$request->rlsi_4:NULL
+                'rlsi_4' => (!empty($request->rlsi_4))?$request->rlsi_4:NULL,
+                'bilmg_1' => (!empty($request->bilmg_1))?$request->bilmg_1:NULL,
+                'bilmg_2' => (!empty($request->bilmg_2))?$request->bilmg_2:NULL,
+                'bilxmg_1' => (!empty($request->bilxmg_1))?$request->bilxmg_1:NULL,
+                'bilxmg_2' => (!empty($request->bilxmg_2))?$request->bilxmg_2:NULL
             ];
 
             if($request->oper == 'add'){
@@ -275,9 +281,8 @@ class rphController extends Controller
     }
 
     public function init_jadual(Request $request){
-
         $table = DB::table('rph.jadual')
-                    ->select('jadual.hari','jadual.subjek','jadual.kelas','jadual.masa_dari','jadual.masa_hingga','rph_main.idno','rph_main.minggu','rph_main.topik_utama','rph_main.sub_topik','rph_main.objektif','rph_main.aktiviti','rph_main.abm_1','rph_main.abm_2','rph_main.abm_3','rph_main.abm_4','rph_main.abm_5','rph_main.abm_lain2','rph_main.emk_1','rph_main.emk_2','rph_main.emk_3','rph_main.emk_4','rph_main.emk_5','rph_main.emk_6','rph_main.emk_7','rph_main.emk_8','rph_main.emk_9','rph_main.emk_10','rph_main.emk_11','rph_main.emk_12','rph_main.tpn_1','rph_main.tpn_2','rph_main.tpn_3','rph_main.tpn_4','rph_main.tpn_5','rph_main.tpn_6','rph_main.ppi_1','rph_main.ppi_2','rph_main.ppi_3','rph_main.ppi_4','rph_main.ppi_5','rph_main.ppi_6','rph_main.ppi_7','rph_main.ppi_8','rph_main.pdpc_1','rph_main.pdpc_2','rph_main.pdpc_3','rph_main.pdpc_4','rph_main.pdpc_5','rph_main.pdpc_6','rph_main.pdpc_7','rph_main.pdpc_8','rph_main.pdpc_lain2','rph_main.rlsi_1','rph_main.rlsi_2','rph_main.rlsi_3','rph_main.rlsi_4')
+                    ->select('jadual.hari','jadual.subjek','jadual.kelas','jadual.masa_dari','jadual.masa_hingga','rph_main.idno','rph_main.minggu','rph_main.topik_utama','rph_main.sub_topik','rph_main.objektif','rph_main.aktiviti','rph_main.abm_1','rph_main.abm_2','rph_main.abm_3','rph_main.abm_4','rph_main.abm_5','rph_main.abm_lain2','rph_main.emk_1','rph_main.emk_2','rph_main.emk_3','rph_main.emk_4','rph_main.emk_5','rph_main.emk_6','rph_main.emk_7','rph_main.emk_8','rph_main.emk_9','rph_main.emk_10','rph_main.emk_11','rph_main.emk_12','rph_main.tpn_1','rph_main.tpn_2','rph_main.tpn_3','rph_main.tpn_4','rph_main.tpn_5','rph_main.tpn_6','rph_main.ppi_1','rph_main.ppi_2','rph_main.ppi_3','rph_main.ppi_4','rph_main.ppi_5','rph_main.ppi_6','rph_main.ppi_7','rph_main.ppi_8','rph_main.pdpc_1','rph_main.pdpc_2','rph_main.pdpc_3','rph_main.pdpc_4','rph_main.pdpc_5','rph_main.pdpc_6','rph_main.pdpc_7','rph_main.pdpc_8','rph_main.pdpc_lain2','rph_main.rlsi_1','rph_main.rlsi_2','rph_main.rlsi_3','rph_main.rlsi_4','rph_main.bilmg_1','rph_main.bilmg_2','rph_main.bilxmg_1','rph_main.bilxmg_2')
                     ->where('jadual.year_id', '=', $request->year_id)
                     ->leftJoin('rph.rph_main', function($join) use ($request){
                         $join = $join->on('rph_main.year_id', '=', 'jadual.year_id')
@@ -294,49 +299,53 @@ class rphController extends Controller
         return json_encode($responce);
     }
 
-    public function getWeek(){
-        $year = date_create('today')->format('Y');
+    public function get_weeks($request){
+        $year_id = DB::table('rph.year_id')
+                        ->where('idno',$request->idno)
+                        ->first();
 
-        $dtStart = date_create('2 jan '.$year)->modify('last Monday');
-        $dtEnd = date_create('last monday of Dec '.$year);
+        $year = date_create($year_id->effdate)->format('Y');
+        $dtStart = date_create($year_id->effdate)->modify('last Monday');
+        $dtEnd = date_create($year_id->effdate)->modify('+1 year');
 
+        $key = 1;
         for($weeks = [];$dtStart <= $dtEnd;$dtStart->modify('+1 week')){
-          $key = $dtStart->format('W-Y');
           $from = $dtStart->format('d/m/Y');
-          $to = (clone $dtStart)->modify('+6 Days')->format('d/m/Y');
+          $to = (clone $dtStart)->modify('+4 Days')->format('d/m/Y');
 
           $responce = new stdClass();
-          $responce->key = $key;
+          $responce->datefr = $dtStart->format('Y-m-d');
+          $responce->dateto = (clone $dtStart)->modify('+4 Days')->format('Y-m-d');
+          $responce->key = 'Week-'.$key;
           $responce->week = $from.' - '.$to;
 
           array_push($weeks,$responce);
+          $key = $key + 1;
         }
 
         return $weeks;
     }
 
-    public function getdays_fromweek($s_key,$hari){
-        $year = date_create('today')->format('Y');
-        $retval='';
+    public function getdays_fromweek($year_id,$hari,$s_key){
+        $year_id = DB::table('rph.year_id')
+                        ->where('idno',$year_id)
+                        ->first();
 
-        $dtStart = date_create('2 jan '.$year)->modify('last Monday');
-        $dtEnd = date_create('last monday of Dec '.$year);
+        $year = date_create($year_id->effdate)->format('Y');
+        $dtStart = date_create($year_id->effdate)->modify('last Monday');
+        $dtEnd = date_create($year_id->effdate)->modify('+1 year');
 
+        $key = 1;
         for($weeks = [];$dtStart <= $dtEnd;$dtStart->modify('+1 week')){
-          $key = $dtStart->format('W-Y');
+          $key_ = 'Week-'.$key;
           $from = $dtStart->format('d/m/Y');
           $to = (clone $dtStart)->modify('+6 Days')->format('d/m/Y');
 
-          if($key == $s_key){
+          if($key_ == $s_key){
             $retval = $dtStart;
             break;
           }
-
-          $responce = new stdClass();
-          $responce->key = $key;
-          $responce->week = $from.' - '.$to;
-
-          array_push($weeks,$responce);
+          $key = $key + 1;
         }
 
         if($retval ==! ''){
@@ -373,7 +382,8 @@ class rphController extends Controller
 
     public function rph_pdf(Request $request){
         $minggu = $request->minggu;
-        $minggu_ke = substr($minggu,0,2);
+        $year_id = $request->year_id;
+        $minggu_ke = substr($minggu,5);
         $jad_1=[];
         $jad_2=[];
         $jad_3=[];
@@ -382,7 +392,7 @@ class rphController extends Controller
         $warna_kelas=[];
 
         $jadual = DB::table('rph.jadual')
-                        ->where('year_id','1')
+                        ->where('year_id',$year_id)
                         ->get();
 
         foreach ($jadual->unique('kelas') as $key => $item){
@@ -390,7 +400,7 @@ class rphController extends Controller
         }
 
         foreach ($jadual as $item) {
-            $item->date2 = Carbon::parse($this->getdays_fromweek($minggu,$item->hari))->isoformat('d MMMM Y');
+            $item->date2 = Carbon::parse($this->getdays_fromweek($item->year_id,$item->hari,$minggu))->format('d F Y');
             $item->warna = $this->amik_warna($warna_kelas,$item->kelas);
             switch ($item->hari) {
                 case 'ISNIN':
@@ -412,9 +422,11 @@ class rphController extends Controller
         }
 
         $rphs = DB::table('rph.jadual')
-                    ->select('jadual.hari','jadual.subjek','jadual.kelas','jadual.masa_dari','jadual.masa_hingga','rph_main.idno','rph_main.minggu','rph_main.date','rph_main.topik_utama','rph_main.sub_topik','rph_main.objektif_id','rph_main.objektif','rph_main.aktiviti','rph_main.abm_1','rph_main.abm_2','rph_main.abm_3','rph_main.abm_4','rph_main.abm_5','rph_main.abm_lain2','rph_main.emk_1','rph_main.emk_2','rph_main.emk_3','rph_main.emk_4','rph_main.emk_5','rph_main.emk_6','rph_main.emk_7','rph_main.emk_8','rph_main.emk_9','rph_main.emk_10','rph_main.emk_11','rph_main.emk_12','rph_main.tpn_1','rph_main.tpn_2','rph_main.tpn_3','rph_main.tpn_4','rph_main.tpn_5','rph_main.tpn_6','rph_main.ppi_1','rph_main.ppi_2','rph_main.ppi_3','rph_main.ppi_4','rph_main.ppi_5','rph_main.ppi_6','rph_main.ppi_7','rph_main.ppi_8','rph_main.pdpc_1','rph_main.pdpc_2','rph_main.pdpc_3','rph_main.pdpc_4','rph_main.pdpc_5','rph_main.pdpc_6','rph_main.pdpc_7','rph_main.pdpc_8','rph_main.pdpc_lain2','rph_main.rlsi_1','rph_main.rlsi_2','rph_main.rlsi_3','rph_main.rlsi_4')
+                    ->select('jadual.hari','jadual.subjek','jadual.kelas','jadual.masa_dari','jadual.masa_hingga','rph_main.idno','rph_main.minggu','rph_main.date','rph_main.topik_utama','rph_main.sub_topik','rph_main.objektif_id','rph_main.objektif','rph_main.aktiviti','rph_main.abm_1','rph_main.abm_2','rph_main.abm_3','rph_main.abm_4','rph_main.abm_5','rph_main.abm_lain2','rph_main.emk_1','rph_main.emk_2','rph_main.emk_3','rph_main.emk_4','rph_main.emk_5','rph_main.emk_6','rph_main.emk_7','rph_main.emk_8','rph_main.emk_9','rph_main.emk_10','rph_main.emk_11','rph_main.emk_12','rph_main.tpn_1','rph_main.tpn_2','rph_main.tpn_3','rph_main.tpn_4','rph_main.tpn_5','rph_main.tpn_6','rph_main.ppi_1','rph_main.ppi_2','rph_main.ppi_3','rph_main.ppi_4','rph_main.ppi_5','rph_main.ppi_6','rph_main.ppi_7','rph_main.ppi_8','rph_main.pdpc_1','rph_main.pdpc_2','rph_main.pdpc_3','rph_main.pdpc_4','rph_main.pdpc_5','rph_main.pdpc_6','rph_main.pdpc_7','rph_main.pdpc_8','rph_main.pdpc_lain2','rph_main.rlsi_1','rph_main.rlsi_2','rph_main.rlsi_3','rph_main.rlsi_4','rph_main.bilmg_1','rph_main.bilmg_2','rph_main.bilxmg_1','rph_main.bilxmg_2')
+                    ->where('jadual.year_id', '=', $year_id)
                     ->join('rph.rph_main', function($join) use ($request){
-                        $join = $join->on('rph_main.subjek', '=', 'jadual.subjek')
+                        $join = $join->on('rph_main.year_id', '=', 'jadual.year_id')
+                                    ->on('rph_main.subjek', '=', 'jadual.subjek')
                                     ->on('rph_main.kelas', '=', 'jadual.kelas')
                                     ->on('rph_main.hari', '=', 'jadual.hari')
                                     ->where('rph_main.minggu', '=', $request->minggu)
@@ -423,12 +435,15 @@ class rphController extends Controller
                     ->get();
 
         foreach ($rphs as $item) {
-            $item->date2 = $item->hari.' , '.Carbon::parse($this->getdays_fromweek($minggu,$item->hari))->isoformat('d MMMM Y');
+            $item->date2 = $item->hari.' , '.Carbon::parse($item->date)->format('d F Y');
             $item->warna = $this->amik_warna($warna_kelas,$item->kelas);
         }
 
         $pdf = PDF::loadView('rph_pdf',compact('jadual','jad_1','jad_2','jad_3','jad_4','jad_5','rphs','minggu','minggu_ke','warna_kelas'));
-        return $pdf->stream();
+
+        if(str_contains(url()->current(),'rph_pdf')){
+            return $pdf->stream();
+        }
         
         return view('rph_pdf',compact('jadual','jad_1','jad_2','jad_3','jad_4','jad_5','rphs','minggu','minggu_ke','warna_kelas'));
     }
@@ -452,7 +467,7 @@ class rphController extends Controller
         }
 
         foreach ($jadual as $item) {
-            $item->date2 = Carbon::parse($this->getdays_fromweek($minggu,$item->hari))->isoformat('d MMMM Y');
+            $item->date2 = Carbon::parse($item->date)->isoformat('d MMMM Y');
             $item->warna = $this->amik_warna($warna_kelas,$item->kelas);
             switch ($item->hari) {
                 case 'ISNIN':
@@ -485,12 +500,12 @@ class rphController extends Controller
                     ->get();
 
         foreach ($rphs as $item) {
-            $item->date2 = $item->hari.' , '.Carbon::parse($this->getdays_fromweek($minggu,$item->hari))->isoformat('d MMMM Y');
+            $item->date2 = $item->hari.' , '.Carbon::parse($item->date)->isoformat('d MMMM Y');
             $item->warna = $this->amik_warna($warna_kelas,$item->kelas);
         }
 
         $pdf = PDF::loadView('rph_pdf',compact('jadual','jad_1','jad_2','jad_3','jad_4','jad_5','rphs','minggu','minggu_ke','warna_kelas'));
-        // return $pdf->stream();
+        return $pdf->stream();
         
         return view('rph_pdf',compact('jadual','jad_1','jad_2','jad_3','jad_4','jad_5','rphs','minggu','minggu_ke','warna_kelas'));
     }

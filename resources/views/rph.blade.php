@@ -57,12 +57,6 @@
 
 @section('header')
 <script>
-    var weeks = [
-            {key:'none', week:'none'},
-            @foreach ($weeks as $week)
-                {key:'{{$week->key}}', week:'{{$week->week}}'},
-            @endforeach
-        ];
 
     var sub_detail_utama = [
             @foreach ($UTAMA as $item)
@@ -186,6 +180,8 @@
       <input id="_token" name="_token" value="{{ csrf_token() }}" type="hidden">
       <input type="hidden" name="idno" id="idno">
       <input type="hidden" name="sel_weeks_id" id="sel_weeks_id">
+      <input type="hidden" name="year_id" id="year_id">
+      <input type="hidden" name="date" id="date">
 
 
       <div class="ui segments">
@@ -573,7 +569,7 @@
                 <span style="padding: 0px 3px ;">/</span>
               </div>
               <div class="field fld_nomarginbtm">
-                <input placeholder="dari jumlah murid" type="text" name="bilmg_1"> 
+                <input placeholder="dari jumlah murid" type="text" name="bilmg_2"> 
               </div>
             </div>
             bilangan pelajar tidak menguasai objektif pembelajaran dan diberi latihan pemulihan
@@ -585,7 +581,7 @@
                 <span style="padding: 0px 3px ;">/</span>
               </div>
               <div class="field fld_nomarginbtm">
-                <input placeholder="dari jumlah murid" type="text" name="bilxmg_1"> 
+                <input placeholder="dari jumlah murid" type="text" name="bilxmg_2"> 
               </div>
             </div>
             <br><br>

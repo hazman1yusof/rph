@@ -485,9 +485,9 @@ input[type='checkbox']{
                 <tr>
                     <th class="{{$rph->warna}} left" width="20%">PENILAIAN PDPC </th>
                     <td class="left" colspan="5" style="padding:10px;">
-                        - / - orang murid dapat menguasai objektif pembelajaran dan diberi latihan pengukuhan
+                        {{$rph->bilmg_1}} / {{$rph->bilmg_2}} orang murid dapat menguasai objektif pembelajaran dan diberi latihan pengukuhan
                         <br>
-                        - / - orang pelajar tidak menguasai objektif pembelajaran dan diberi latihan pemulihan 
+                        {{$rph->bilxmg_1}} / {{$rph->bilxmg_2}} orang pelajar tidak menguasai objektif pembelajaran dan diberi latihan pemulihan 
                         <br><br>
                         Aktiviti pengajaran dan pembelajaran ditangguhkan kerana :
                         <table class="cb_tbl">

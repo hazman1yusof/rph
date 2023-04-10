@@ -9,8 +9,6 @@ $(document).ready(function () {
 		$( "div.swiper" ).remove();
 	}
 
-	pop_weeks(weeks);
-
   $('select#sel_weeks').change(function(){
 		let id = $(this).val();
 		let week = weeks[id];
@@ -37,11 +35,15 @@ $(document).ready(function () {
 	});
 
 	$('#sel_print').click(function(){
-		window.open("./rph_pdf?minggu="+$('#sel_weeks_id').val());
+		window.open("./rph_pdf?minggu="+$('#sel_weeks_id').val()+"&year_id="+$('#sel_year_id').val());
 	});
 
 	$('#sel_preview').click(function(){
-		window.open("./rph_prev?minggu="+$('#sel_weeks_id').val());
+		window.open("./rph_prev?minggu="+$('#sel_weeks_id').val()+"&year_id="+$('#sel_year_id').val());
+	});
+
+	$('#sel_year_id').change(function(){
+		$('#year_id').val($(this).val());
 	});
 
 	$("form#tambah_rph").validate({
@@ -82,8 +84,6 @@ function save_rph(oper){
 
   }).done(function(data){
   	$('.ui.modal').modal('hide');
-		$('form#tambah_rph .ui.checkbox').checkbox('set unchecked');
-		emptyFormdata('form#tambah_rph');
 		init_jadual();
   });
 }
@@ -94,7 +94,8 @@ function init_jadual(){
 	kosongkan_jadual();
 	var param = {
 		action: 'init_jadual',
-		minggu: $('#sel_weeks_id').val()
+		minggu: $('#sel_weeks_id').val(),
+		year_id: $('#sel_year_id').val()
 	}
 
 	$.get("./rph_table?"+$.param(param), function(data) {
@@ -122,6 +123,7 @@ function kosongkan_jadual(){
 function letak_jadual(){
 	var cnt_1 = 0;var cnt_2 = 0;var cnt_3 = 0;var cnt_4 = 0;var cnt_5 = 0;
 	jadual.forEach(function(e,i){
+		let date = car_date(e.hari);
 		let masa_dari = moment(e.masa_dari, 'HH:mm:ss').format('hh:mm A');
 		let masa_hingga = moment(e.masa_hingga, 'HH:mm:ss').format('hh:mm A');
 		let my_i = 0;
@@ -151,7 +153,7 @@ function letak_jadual(){
 	              MASA DARI : `+masa_dari+` – `+masa_hingga+` <br>
 	            </div>
 	            <br>
-		           <div class="ui blue basic button add_rph" data-id = `+i+` data-oper = `+oper_+`>
+		           <div class="ui blue basic button add_rph" data-id = `+i+` data-oper = `+oper_+` data-date = `+date+`>
 						    `+title_+`
 						   </div>
 	           </div>
@@ -170,7 +172,7 @@ function letak_jadual(){
               MASA DARI : `+masa_dari+` – `+masa_hingga+` <br>
             </div>
             <br>
-	           <div class="ui blue basic button add_rph" data-id = `+i+` data-oper = `+oper_+`>
+	           <div class="ui blue basic button add_rph" data-id = `+i+` data-oper = `+oper_+` data-date = `+date+`>
 					    `+title_+`
 					   </div>
            </div>
@@ -190,7 +192,7 @@ function letak_jadual(){
 }
 
 function add_rph(event){
-	init_form($(this).data('id'));
+	init_form($(this).data('id'),$(this).data('date'));
 	let oper = $(this).data('oper');
 	$('.ui.modal').modal({
 		autofocus:false,
@@ -205,23 +207,50 @@ function add_rph(event){
 		onHidden:function($element){
 			$('form#tambah_rph .ui.dropdown').dropdown('restore defaults')
 			$('form#tambah_rph .ui.checkbox').checkbox('set unchecked');
-			emptyFormdata('form#tambah_rph');
+			emptyFormdata_div('form#tambah_rph');
 		}
 	}).modal('show');
 }
 
-function pop_weeks(weeks){
-	$('select#sel_weeks').html('');
-	weeks.forEach(function(e,i){
-		if(e.key == 'none'){
-			$('select#sel_weeks').append(`<option value=" ">Select Week</option>`);
-		}else{
-			$('select#sel_weeks').append(`<option value="`+i+`">`+e.key+` &nbsp;(`+e.week+`) </option>`);
-		}
-	});
+var get_weeks_data = [];
+function pop_weeks(idno){
+	var param = {
+		action: 'get_weeks',
+		idno:idno
+	}
+
+	$.get("./rph_table?"+$.param(param), function(data) {
+
+	},'json').done(function(data) {
+		get_weeks_data = data;
+		$('select#sel_weeks').html('<option value=" ">Select Week</option>');
+		data.forEach(function(e,i){
+	  	if(moment().isBetween(e.datefr, e.dateto, null, '[]')){
+				$('select#sel_weeks').append(`<option value="`+i+`" selected >`+e.key+` &nbsp;(`+e.week+`) </option>`);
+	  		$('#sel_weeks_id').val(e.key);
+	  	}else{
+				$('select#sel_weeks').append(`<option value="`+i+`">`+e.key+` &nbsp;(`+e.week+`) </option>`);
+	  	}
+		});
+
+		// let lastdate = null;
+		// let idtopick = null;
+		// data.forEach(function(e,i){
+	  	
+	  // 	if(moment().isBetween(e.datefr, e.dateto, null, '[]')){
+	  // 		idtopick = key;
+	  // 	}
+
+	  // 	$("#sel_year_id").append(`<option value="`+e.idno+`">`+e.desc+`</option>`);
+	  // });
+		// $("#sel_year_id").val(idtopick);
+  }).fail(function(data){
+      alert('error');
+  });
+	
 }
 
-function init_form(id){
+function init_form(id,date){
 	let data = jadual[id];
 	let entries = Object.entries(data);
 
@@ -235,6 +264,7 @@ function init_form(id){
 		}
 	});
 	$("form#tambah_rph [name='minggu']").val($('#sel_weeks_id').val());
+	$("form#tambah_rph [name='date']").val(date);
 	
 }
 
@@ -268,7 +298,20 @@ function year_id_sel_init(){
 	  	$("#sel_year_id").append(`<option value="`+e.idno+`">`+e.desc+`</option>`);
 	  });
 		$("#sel_year_id").val(idtopick);
+		$("#year_id").val(idtopick);
+		pop_weeks(idtopick);
   }).fail(function(data){
       alert('error');
   });
+}
+
+function car_date(hari){
+	let datefr = get_weeks_data[$('select#sel_weeks').val()].datefr;
+	switch(hari){
+		case 'ISNIN': return moment(datefr).format("YYYY-MM-DD"); break;
+		case 'SELASA':  return moment(datefr).add(1,'days').format("YYYY-MM-DD"); break;
+		case 'RABU':  return moment(datefr).add(2,'days').format("YYYY-MM-DD"); break;
+		case 'KHAMIS':  return moment(datefr).add(3,'days').format("YYYY-MM-DD"); break;
+		case 'JUMAAT':  return moment(datefr).add(4,'days').format("YYYY-MM-DD"); break;
+	}
 }
