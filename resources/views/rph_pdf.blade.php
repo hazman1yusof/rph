@@ -139,7 +139,7 @@ input[type='checkbox']{
                 <td>{{$jad->subjek}}</td>
                 <td class="{{$jad->warna}}">{{$jad->kelas}}</td>
                 <td>{{\Carbon\Carbon::createFromFormat('H:i:s',$jad->masa_dari)->format('h:i A')}} – {{\Carbon\Carbon::createFromFormat('H:i:s',$jad->masa_hingga)->format('h:i A')}}</td>
-                <td class="left"></td>
+                <td class="left">{{$jad->catatan}}</td>
             </tr>
             @endforeach
             @endif

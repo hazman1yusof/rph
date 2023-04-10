@@ -379,6 +379,18 @@ class rphController extends Controller
         }
     }
 
+    public function amik_sub_det($idno){
+        if(!empty($idno)){
+            $subjek_detail = DB::table('rph.subjek_detail')
+                            ->where('idno',$idno);
+
+            if($subjek_detail->exists()){
+                return $subjek_detail->first()->desc;
+            }
+        }
+        
+        return '';
+    }
 
     public function rph_pdf(Request $request){
         $minggu = $request->minggu;
@@ -422,7 +434,7 @@ class rphController extends Controller
         }
 
         $rphs = DB::table('rph.jadual')
-                    ->select('jadual.hari','jadual.subjek','jadual.kelas','jadual.masa_dari','jadual.masa_hingga','rph_main.idno','rph_main.minggu','rph_main.date','rph_main.topik_utama','rph_main.sub_topik','rph_main.objektif_id','rph_main.objektif','rph_main.aktiviti','rph_main.abm_1','rph_main.abm_2','rph_main.abm_3','rph_main.abm_4','rph_main.abm_5','rph_main.abm_lain2','rph_main.emk_1','rph_main.emk_2','rph_main.emk_3','rph_main.emk_4','rph_main.emk_5','rph_main.emk_6','rph_main.emk_7','rph_main.emk_8','rph_main.emk_9','rph_main.emk_10','rph_main.emk_11','rph_main.emk_12','rph_main.tpn_1','rph_main.tpn_2','rph_main.tpn_3','rph_main.tpn_4','rph_main.tpn_5','rph_main.tpn_6','rph_main.ppi_1','rph_main.ppi_2','rph_main.ppi_3','rph_main.ppi_4','rph_main.ppi_5','rph_main.ppi_6','rph_main.ppi_7','rph_main.ppi_8','rph_main.pdpc_1','rph_main.pdpc_2','rph_main.pdpc_3','rph_main.pdpc_4','rph_main.pdpc_5','rph_main.pdpc_6','rph_main.pdpc_7','rph_main.pdpc_8','rph_main.pdpc_lain2','rph_main.rlsi_1','rph_main.rlsi_2','rph_main.rlsi_3','rph_main.rlsi_4','rph_main.bilmg_1','rph_main.bilmg_2','rph_main.bilxmg_1','rph_main.bilxmg_2')
+                    ->select('jadual.idno','jadual.hari','jadual.year_id','jadual.subjek','jadual.kelas','jadual.masa_dari','jadual.masa_hingga','rph_main.minggu','rph_main.date','rph_main.topik_utama','rph_main.sub_topik','rph_main.objektif_id','rph_main.objektif','rph_main.aktiviti','rph_main.abm_1','rph_main.abm_2','rph_main.abm_3','rph_main.abm_4','rph_main.abm_5','rph_main.abm_lain2','rph_main.emk_1','rph_main.emk_2','rph_main.emk_3','rph_main.emk_4','rph_main.emk_5','rph_main.emk_6','rph_main.emk_7','rph_main.emk_8','rph_main.emk_9','rph_main.emk_10','rph_main.emk_11','rph_main.emk_12','rph_main.tpn_1','rph_main.tpn_2','rph_main.tpn_3','rph_main.tpn_4','rph_main.tpn_5','rph_main.tpn_6','rph_main.ppi_1','rph_main.ppi_2','rph_main.ppi_3','rph_main.ppi_4','rph_main.ppi_5','rph_main.ppi_6','rph_main.ppi_7','rph_main.ppi_8','rph_main.pdpc_1','rph_main.pdpc_2','rph_main.pdpc_3','rph_main.pdpc_4','rph_main.pdpc_5','rph_main.pdpc_6','rph_main.pdpc_7','rph_main.pdpc_8','rph_main.pdpc_lain2','rph_main.rlsi_1','rph_main.rlsi_2','rph_main.rlsi_3','rph_main.rlsi_4','rph_main.bilmg_1','rph_main.bilmg_2','rph_main.bilxmg_1','rph_main.bilxmg_2')
                     ->where('jadual.year_id', '=', $year_id)
                     ->join('rph.rph_main', function($join) use ($request){
                         $join = $join->on('rph_main.year_id', '=', 'jadual.year_id')
@@ -437,6 +449,58 @@ class rphController extends Controller
         foreach ($rphs as $item) {
             $item->date2 = $item->hari.' , '.Carbon::parse($item->date)->format('d F Y');
             $item->warna = $this->amik_warna($warna_kelas,$item->kelas);
+
+            $item->topik_utama = $this->amik_sub_det($item->topik_utama);
+            $item->sub_topik = $this->amik_sub_det($item->sub_topik);
+            $item->objektif = $this->amik_sub_det($item->objektif);
+
+            switch ($item->hari) {
+                case 'ISNIN':
+                    foreach ($jad_1 as $jad_1_obj) {
+                        if($jad_1_obj->idno == $item->idno){
+                            $jad_1_obj->catatan = $this->amik_sub_det($item->topik_utama);
+                        }else{
+                            $jad_1_obj->catatan = '';
+                        }
+                    }
+                    break;
+                case 'SELASA':
+                    foreach ($jad_2 as $jad_2_obj) {
+                        if($jad_2_obj->idno == $item->idno){
+                            $jad_2_obj->catatan = $this->amik_sub_det($item->topik_utama);
+                        }else{
+                            $jad_2_obj->catatan = '';
+                        }
+                    }
+                    break;
+                case 'RABU':
+                    foreach ($jad_3 as $jad_3_obj) {
+                        if($jad_3_obj->idno == $item->idno){
+                            $jad_3_obj->catatan = $this->amik_sub_det($item->topik_utama);
+                        }else{
+                            $jad_3_obj->catatan = '';
+                        }
+                    }
+                    break;
+                case 'KHAMIS':
+                    foreach ($jad_4 as $jad_4_obj) {
+                        if($jad_4_obj->idno == $item->idno){
+                            $jad_4_obj->catatan = $this->amik_sub_det($item->topik_utama);
+                        }else{
+                            $jad_4_obj->catatan = '';
+                        }
+                    }
+                    break;
+                case 'JUMAAT':
+                    foreach ($jad_5 as $jad_5_obj) {
+                        if($jad_5_obj->idno == $item->idno){
+                            $jad_5_obj->catatan = $this->amik_sub_det($item->topik_utama);
+                        }else{
+                            $jad_5_obj->catatan = '';
+                        }
+                    }
+                    break;
+            }
         }
 
         $pdf = PDF::loadView('rph_pdf',compact('jadual','jad_1','jad_2','jad_3','jad_4','jad_5','rphs','minggu','minggu_ke','warna_kelas'));
@@ -448,66 +512,84 @@ class rphController extends Controller
         return view('rph_pdf',compact('jadual','jad_1','jad_2','jad_3','jad_4','jad_5','rphs','minggu','minggu_ke','warna_kelas'));
     }
 
-    public function rph_prev(Request $request){
-        $minggu = $request->minggu;
-        $minggu_ke = substr($minggu,0,2);
-        $jad_1=[];
-        $jad_2=[];
-        $jad_3=[];
-        $jad_4=[];
-        $jad_5=[];
-        $warna_kelas=[];
+    // public function rph_prev(Request $request){
+    //     $minggu = $request->minggu;
+    //     $minggu_ke = substr($minggu,0,2);
+    //     $jad_1=[];
+    //     $jad_2=[];
+    //     $jad_3=[];
+    //     $jad_4=[];
+    //     $jad_5=[];
+    //     $warna_kelas=[];
 
-        $jadual = DB::table('rph.jadual')
-                        ->where('year_id','1')
-                        ->get();
+    //     $jadual = DB::table('rph.jadual')
+    //                     ->where('year_id','1')
+    //                     ->get();
 
-        foreach ($jadual->unique('kelas') as $key => $item){
-            array_push($warna_kelas,[$item->kelas,'warna'.$key]);
-        }
+    //     foreach ($jadual->unique('kelas') as $key => $item){
+    //         array_push($warna_kelas,[$item->kelas,'warna'.$key]);
+    //     }
 
-        foreach ($jadual as $item) {
-            $item->date2 = Carbon::parse($item->date)->isoformat('d MMMM Y');
-            $item->warna = $this->amik_warna($warna_kelas,$item->kelas);
-            switch ($item->hari) {
-                case 'ISNIN':
-                    array_push($jad_1,$item);
-                    break;
-                case 'SELASA':
-                    array_push($jad_2,$item);
-                    break;
-                case 'RABU':
-                    array_push($jad_3,$item);
-                    break;
-                case 'KHAMIS':
-                    array_push($jad_4,$item);
-                    break;
-                case 'JUMAAT':
-                    array_push($jad_5,$item);
-                    break;
-            }
-        }
+    //     foreach ($jadual as $item) {
+    //         $item->date2 = Carbon::parse($item->date)->isoformat('d MMMM Y');
+    //         $item->warna = $this->amik_warna($warna_kelas,$item->kelas);
+    //         switch ($item->hari) {
+    //             case 'ISNIN':
+    //                 array_push($jad_1,$item);
+    //                 break;
+    //             case 'SELASA':
+    //                 array_push($jad_2,$item);
+    //                 break;
+    //             case 'RABU':
+    //                 array_push($jad_3,$item);
+    //                 break;
+    //             case 'KHAMIS':
+    //                 array_push($jad_4,$item);
+    //                 break;
+    //             case 'JUMAAT':
+    //                 array_push($jad_5,$item);
+    //                 break;
+    //         }
+    //     }
 
-        $rphs = DB::table('rph.jadual')
-                    ->select('jadual.hari','jadual.subjek','jadual.kelas','jadual.masa_dari','jadual.masa_hingga','rph_main.idno','rph_main.minggu','rph_main.date','rph_main.topik_utama','rph_main.sub_topik','rph_main.objektif_id','rph_main.objektif','rph_main.aktiviti','rph_main.abm_1','rph_main.abm_2','rph_main.abm_3','rph_main.abm_4','rph_main.abm_5','rph_main.abm_lain2','rph_main.emk_1','rph_main.emk_2','rph_main.emk_3','rph_main.emk_4','rph_main.emk_5','rph_main.emk_6','rph_main.emk_7','rph_main.emk_8','rph_main.emk_9','rph_main.emk_10','rph_main.emk_11','rph_main.emk_12','rph_main.tpn_1','rph_main.tpn_2','rph_main.tpn_3','rph_main.tpn_4','rph_main.tpn_5','rph_main.tpn_6','rph_main.ppi_1','rph_main.ppi_2','rph_main.ppi_3','rph_main.ppi_4','rph_main.ppi_5','rph_main.ppi_6','rph_main.ppi_7','rph_main.ppi_8','rph_main.pdpc_1','rph_main.pdpc_2','rph_main.pdpc_3','rph_main.pdpc_4','rph_main.pdpc_5','rph_main.pdpc_6','rph_main.pdpc_7','rph_main.pdpc_8','rph_main.pdpc_lain2','rph_main.rlsi_1','rph_main.rlsi_2','rph_main.rlsi_3','rph_main.rlsi_4')
-                    ->join('rph.rph_main', function($join) use ($request){
-                        $join = $join->on('rph_main.subjek', '=', 'jadual.subjek')
-                                    ->on('rph_main.kelas', '=', 'jadual.kelas')
-                                    ->on('rph_main.hari', '=', 'jadual.hari')
-                                    ->where('rph_main.minggu', '=', $request->minggu)
-                                    ->on('rph_main.masa_dari', '=', 'jadual.masa_dari');
-                    })
-                    ->get();
+    //     $rphs = DB::table('rph.jadual')
+    //                 ->select('jadual.hari','jadual.subjek','jadual.kelas','jadual.masa_dari','jadual.masa_hingga','rph_main.idno','rph_main.minggu','rph_main.date','rph_main.topik_utama','rph_main.sub_topik','rph_main.objektif_id','rph_main.objektif','rph_main.aktiviti','rph_main.abm_1','rph_main.abm_2','rph_main.abm_3','rph_main.abm_4','rph_main.abm_5','rph_main.abm_lain2','rph_main.emk_1','rph_main.emk_2','rph_main.emk_3','rph_main.emk_4','rph_main.emk_5','rph_main.emk_6','rph_main.emk_7','rph_main.emk_8','rph_main.emk_9','rph_main.emk_10','rph_main.emk_11','rph_main.emk_12','rph_main.tpn_1','rph_main.tpn_2','rph_main.tpn_3','rph_main.tpn_4','rph_main.tpn_5','rph_main.tpn_6','rph_main.ppi_1','rph_main.ppi_2','rph_main.ppi_3','rph_main.ppi_4','rph_main.ppi_5','rph_main.ppi_6','rph_main.ppi_7','rph_main.ppi_8','rph_main.pdpc_1','rph_main.pdpc_2','rph_main.pdpc_3','rph_main.pdpc_4','rph_main.pdpc_5','rph_main.pdpc_6','rph_main.pdpc_7','rph_main.pdpc_8','rph_main.pdpc_lain2','rph_main.rlsi_1','rph_main.rlsi_2','rph_main.rlsi_3','rph_main.rlsi_4')
+    //                 ->join('rph.rph_main', function($join) use ($request){
+    //                     $join = $join->on('rph_main.subjek', '=', 'jadual.subjek')
+    //                                 ->on('rph_main.kelas', '=', 'jadual.kelas')
+    //                                 ->on('rph_main.hari', '=', 'jadual.hari')
+    //                                 ->where('rph_main.minggu', '=', $request->minggu)
+    //                                 ->on('rph_main.masa_dari', '=', 'jadual.masa_dari');
+    //                 })
+    //                 ->get();
 
-        foreach ($rphs as $item) {
-            $item->date2 = $item->hari.' , '.Carbon::parse($item->date)->isoformat('d MMMM Y');
-            $item->warna = $this->amik_warna($warna_kelas,$item->kelas);
-        }
+    //     foreach ($rphs as $item) {
+    //         $item->date2 = $item->hari.' , '.Carbon::parse($item->date)->isoformat('d MMMM Y');
+    //         $item->warna = $this->amik_warna($warna_kelas,$item->kelas);
 
-        $pdf = PDF::loadView('rph_pdf',compact('jadual','jad_1','jad_2','jad_3','jad_4','jad_5','rphs','minggu','minggu_ke','warna_kelas'));
-        return $pdf->stream();
+    //         switch ($item->hari) {
+    //             case 'ISNIN':
+                    
+    //                 break;
+    //             case 'SELASA':
+
+    //                 break;
+    //             case 'RABU':
+
+    //                 break;
+    //             case 'KHAMIS':
+
+    //                 break;
+    //             case 'JUMAAT':
+
+    //                 break;
+    //         }
+    //     }
+
+    //     $pdf = PDF::loadView('rph_pdf',compact('jadual','jad_1','jad_2','jad_3','jad_4','jad_5','rphs','minggu','minggu_ke','warna_kelas'));
+    //     return $pdf->stream();
         
-        return view('rph_pdf',compact('jadual','jad_1','jad_2','jad_3','jad_4','jad_5','rphs','minggu','minggu_ke','warna_kelas'));
-    }
+    //     return view('rph_pdf',compact('jadual','jad_1','jad_2','jad_3','jad_4','jad_5','rphs','minggu','minggu_ke','warna_kelas'));
+    // }
 
 }
