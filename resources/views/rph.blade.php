@@ -92,13 +92,10 @@
 <form class="ui form" id="rph_year_week">
  <div class="ui inverted dimmer"></div>
   <div class="field">
-    <label>Select Year</label>
-    <div class="ui calendar" id="sel_year">
-      <div class="ui input left icon">
-        <i class="calendar icon"></i>
-        <input type="text" placeholder="Date" value="{{$year}}" required>
-      </div>
-    </div>
+    <label>Pilih Jadual</label>
+    <select class="ui long dropdown" id="sel_year_id" required>
+      <option value="">Pilih Jadual</option>
+    </select>
   </div>
 
   <div class="field">

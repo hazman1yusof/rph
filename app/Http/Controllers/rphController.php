@@ -90,6 +90,7 @@ class rphController extends Controller
             if($request->oper == 'add'){
                 DB::table('rph.jadual')
                     ->insert([
+                        'year_id' => $request->year_id,
                         'hari' => strtoupper($request->hari),
                         'subjek' => strtoupper($request->subjek),
                         'kelas' => strtoupper($request->kelas),
@@ -175,6 +176,7 @@ class rphController extends Controller
         try {
 
             $array_=[
+                'year_id' => (!empty($request->year_id))?$request->subjek:NULL,
                 'subjek' => (!empty($request->subjek))?$request->subjek:NULL,
                 'kelas' => (!empty($request->kelas))?$request->kelas:NULL,
                 'hari' => (!empty($request->hari))?$request->hari:NULL,

@@ -118,6 +118,7 @@ function save_subjek(hari){
 	var param = {
 		action: 'save_jadual',
 		hari: hari,
+		year_id: $("#sel_year_id").val(),
 		oper:oper
 	}
 
@@ -141,7 +142,7 @@ function save_year_id(oper){
 
 	if(oper == 'del'){
 		param.idno = $("#sel_year_id").val();
-		param._token=$("#_token").val();
+		param._token = $("#_token").val();
 		year_id=null;
 	}
 

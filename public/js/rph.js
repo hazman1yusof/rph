@@ -1,5 +1,5 @@
 $(document).ready(function () {
-	
+	year_id_sel_init();
 	if(istablet){
 		const swiper = new Swiper('.swiper', {
 		  direction: 'horizontal',
@@ -10,11 +10,6 @@ $(document).ready(function () {
 	}
 
 	pop_weeks(weeks);
-	$('#sel_year').calendar({type: 'year'});
-
-	$('#sel_year').change(function(){
-		$('#rph_year_week').dimmer('show');
-	});
 
   $('select#sel_weeks').change(function(){
 		let id = $(this).val();
@@ -28,7 +23,7 @@ $(document).ready(function () {
   	if($('#sel_weeks').val() == ' '){
   		alert('Please Select Week');
   	}else{
-	  	$('select#sel_weeks,#sel_year').parent().addClass('disabled');
+	  	$('select#sel_weeks,#sel_year_id').parent().addClass('disabled');
 	  	$('#sel_tobtm').hide();
 			$('#rph_select,#sel_totop,#sel_buts').show();
 			init_jadual();
@@ -36,7 +31,7 @@ $(document).ready(function () {
 	});
 
 	$('#sel_totop').click(function(){
-  	$('select#sel_weeks,#sel_year').parent().removeClass('disabled');
+  	$('select#sel_weeks,#sel_year_id').parent().removeClass('disabled');
   	$('#sel_tobtm').show();
 		$('#rph_select,#sel_totop,#sel_buts').hide();
 	});
@@ -241,4 +236,39 @@ function init_form(id){
 	});
 	$("form#tambah_rph [name='minggu']").val($('#sel_weeks_id').val());
 	
+}
+
+var year_id_sel_data = [];
+function year_id_sel_init(){
+	let datenow = moment();
+	$('#sel_year_id').html(`<option value="">Pilih Jadual</option>`);
+  
+
+  var param = {
+		action: 'year_id_sel_init'
+	}
+
+	$.get("./rph_table?"+$.param(param), function(data) {
+
+	},'json').done(function(data) {
+		year_id_sel_data = data;
+		let lastdate = null;
+		let idtopick = null;
+		data.data.forEach(function(e,i){
+	  	let currdate = moment(e.effdate);
+	  	if(currdate.isSameOrBefore() && lastdate==null){
+	  		lastdate = currdate;
+	  		idtopick = e.idno;
+	  	}else if(currdate.isSameOrBefore() && lastdate!=null){
+	  		if(currdate.isAfter(lastdate)){
+	  			lastdate = currdate;
+	  			idtopick = e.idno;
+	  		}
+	  	}
+	  	$("#sel_year_id").append(`<option value="`+e.idno+`">`+e.desc+`</option>`);
+	  });
+		$("#sel_year_id").val(idtopick);
+  }).fail(function(data){
+      alert('error');
+  });
 }
