@@ -39,6 +39,7 @@ $(document).ready(function () {
   		oper = 'add';
 		emptyFormdata([],'form#tambah_subjek');
 		$('.ui.modal#modal_jadual').modal({
+			autofocus:false,
 			onApprove:function($element){
 				if($("form#tambah_subjek").valid()) {
 	  				save_subjek(hari);
@@ -53,6 +54,7 @@ $(document).ready(function () {
 	$('#add_jadual').click(function(){
 		emptyFormdata([],'form#form_year_id');
 		$('.ui.modal#modal_year_id').modal({
+			autofocus:false,
 			onApprove:function($element){
 				if($("form#form_year_id").valid()) {
 	  				save_year_id('add');
@@ -74,6 +76,7 @@ $(document).ready(function () {
 			}
 		});
 		$('.ui.modal#modal_year_id').modal({
+			autofocus:false,
 			onApprove:function($element){
 				if($("form#form_year_id").valid()) {
 	  				save_year_id('edit');
@@ -283,6 +286,7 @@ function edit_jadual(event){
 
 	oper = 'edit';
 	$('.ui.modal#modal_jadual').modal({
+		autofocus:false,
 		onApprove:function($element){
 			if($("form#tambah_subjek").valid()) {
 					save_subjek(data.hari);

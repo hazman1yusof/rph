@@ -60,19 +60,25 @@
 
     var sub_detail_utama = [
             @foreach ($UTAMA as $item)
-                {idno:'{{$item->idno}}', desc:'{{$item->desc}}'},
+                {idno:'{{$item->idno}}', subjekcode:'{{$item->subjekcode}}', desc:'{{$item->desc}}'},
             @endforeach
         ];
 
     var sub_detail_subtopik = [
             @foreach ($SUBTOPIK as $item)
-                {idno:'{{$item->idno}}', desc:'{{$item->desc}}'},
+                {idno:'{{$item->idno}}', subjekcode:'{{$item->subjekcode}}', desc:'{{$item->desc}}'},
             @endforeach
         ];
 
     var sub_detail_objektif = [
             @foreach ($OBJEKTIF as $item)
-                {idno:'{{$item->idno}}', desc:'{{$item->desc}}'},
+                {idno:'{{$item->idno}}', subjekcode:'{{$item->subjekcode}}', desc:'{{$item->desc}}'},
+            @endforeach
+        ];
+
+    var subjek_list = [
+            @foreach ($subjek as $item)
+                {idno:'{{$item->idno}}', subjek:'{{$item->subjek}}'},
             @endforeach
         ];
     
@@ -182,6 +188,7 @@
       <input type="hidden" name="sel_weeks_id" id="sel_weeks_id">
       <input type="hidden" name="year_id" id="year_id">
       <input type="hidden" name="date" id="date">
+      <input type="hidden" name="subjekcode" id="subjekcode">
 
 
       <div class="ui segments">
@@ -228,7 +235,7 @@
           <input type="hidden" name="topik_utama">
           <i class="dropdown icon"></i>
           <div class="default text">TOPIK UTAMA</div>
-            <div class="menu">
+            <div class="menu" id="topik_utama_dd">
               @foreach ($UTAMA as $item)
               <div class="item" data-value="{{$item->idno}}">{{$item->desc}}</div>
               @endforeach
@@ -241,7 +248,7 @@
           <input type="hidden" name="sub_topik">
           <i class="dropdown icon"></i>
           <div class="default text">SUB TOPIK</div>
-            <div class="menu">
+            <div class="menu" id="sub_topik_dd">
               @foreach ($SUBTOPIK as $item)
               <div class="item" data-value="{{$item->idno}}">{{$item->desc}}</div>
               @endforeach
@@ -254,7 +261,7 @@
           <input type="hidden" name="objektif">
           <i class="dropdown icon"></i>
           <div class="default text">OBJEKTIF PEMBELAJARAN</div>
-            <div class="menu">
+            <div class="menu" id="objektif_dd">
               @foreach ($OBJEKTIF as $item)
               <div class="item" data-value="{{$item->idno}}">{{$item->desc}}</div>
               @endforeach

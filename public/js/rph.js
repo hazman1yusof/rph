@@ -253,6 +253,7 @@ function pop_weeks(idno){
 function init_form(id,date){
 	let data = jadual[id];
 	let entries = Object.entries(data);
+	init_topik_utk_subjek(entries[1][1]);
 
 	entries.forEach(function(e,i){
 		if($("form#tambah_rph [name='"+e[0]+"']").prop('type') == 'checkbox' && e[1] == '1'){
@@ -265,7 +266,7 @@ function init_form(id,date){
 	});
 	$("form#tambah_rph [name='minggu']").val($('#sel_weeks_id').val());
 	$("form#tambah_rph [name='date']").val(date);
-	
+
 }
 
 var year_id_sel_data = [];
@@ -314,4 +315,25 @@ function car_date(hari){
 		case 'KHAMIS':  return moment(datefr).add(3,'days').format("YYYY-MM-DD"); break;
 		case 'JUMAAT':  return moment(datefr).add(4,'days').format("YYYY-MM-DD"); break;
 	}
+}
+
+function init_topik_utk_subjek(subjek_code){
+	$('#topik_utama_dd').html('');
+	$('#sub_topik_dd').html('');
+	$('#objektif_dd').html('');
+	sub_detail_utama.forEach(function(e,i){
+		if(e.subjekcode == subjek_code){
+			$('#topik_utama_dd').append(`<div class="item" data-value="`+e.idno+`">`+e.desc+`</div>`);
+		}
+	});
+	sub_detail_subtopik.forEach(function(e,i){
+		if(e.subjekcode == subjek_code){
+			$('#sub_topik_dd').append(`<div class="item" data-value="`+e.idno+`">`+e.desc+`</div>`);
+		}
+	});
+	sub_detail_objektif.forEach(function(e,i){
+		if(e.subjekcode == subjek_code){
+			$('#objektif_dd').append(`<div class="item" data-value="`+e.idno+`">`+e.desc+`</div>`);
+		}
+	});
 }

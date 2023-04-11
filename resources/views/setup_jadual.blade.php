@@ -26,6 +26,11 @@
 
 @section('header')
 <script>
+    var subjek_list = [
+            @foreach ($subjek as $item)
+                {idno:'{{$item->idno}}', subjek:'{{$item->subjek}}'},
+            @endforeach
+        ];
 </script>
 @endsection
 
@@ -133,7 +138,16 @@
       <input type="hidden" name="idno">
       <div class="field">
         <label>Subjek</label>
-        <input type="text" name="subjek" id="subjek" class="uppercase" required>
+        <div class="ui fluid search selection long dropdown">
+          <input type="hidden" name="subjekcode">
+          <i class="dropdown icon"></i>
+          <div class="default text">SUBJEK</div>
+            <div class="menu">
+              @foreach ($subjek as $item)
+              <div class="item" data-value="{{$item->idno}}">{{$item->subjek}}</div>
+              @endforeach
+            </div>
+        </div>
       </div>
       <div class="field">
         <label>Kelas</label>
