@@ -11,7 +11,7 @@ $(document).ready(function () {
 
   $('select#sel_weeks').change(function(){
 		let id = $(this).val();
-		let week = weeks[id];
+		let week = get_weeks_data[id];
 
 		$('#sel_weeks_id').val(week.key);
 		$('#sel_weeks_p').text('Week : '+week.week);
