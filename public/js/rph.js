@@ -122,6 +122,7 @@ function kosongkan_jadual(){
 
 function letak_jadual(){
 	var cnt_1 = 0;var cnt_2 = 0;var cnt_3 = 0;var cnt_4 = 0;var cnt_5 = 0;
+	var cnt_1_d = 0;var cnt_2_d = 0;var cnt_3_d = 0;var cnt_4_d = 0;var cnt_5_d = 0;
 	jadual.forEach(function(e,i){
 		let date = car_date(e.hari);
 		let masa_dari = moment(e.masa_dari, 'HH:mm:ss').format('hh:mm A');
@@ -134,11 +135,11 @@ function letak_jadual(){
 		}
 
 		switch(e.hari){
-			case 'ISNIN': cnt_1++; my_i = my_i+cnt_1; break;
-			case 'SELASA':  cnt_2++; my_i = my_i+cnt_2; break;
-			case 'RABU':  cnt_3++; my_i = my_i+cnt_3; break;
-			case 'KHAMIS':  cnt_4++; my_i = my_i+cnt_4; break;
-			case 'JUMAAT':  cnt_5++; my_i = my_i+cnt_5; break;
+			case 'ISNIN': cnt_1++; my_i = my_i+cnt_1; if(e.idno!=null)cnt_1_d++; break;
+			case 'SELASA':  cnt_2++; my_i = my_i+cnt_2; if(e.idno!=null)cnt_2_d++; break;
+			case 'RABU':  cnt_3++; my_i = my_i+cnt_3; if(e.idno!=null)cnt_3_d++; break;
+			case 'KHAMIS':  cnt_4++; my_i = my_i+cnt_4; if(e.idno!=null)cnt_4_d++; break;
+			case 'JUMAAT':  cnt_5++; my_i = my_i+cnt_5; if(e.idno!=null)cnt_5_d++; break;
 		}
 		if(istablet){
 			$('div#'+e.hari+' div.swiper-wrapper').append(`
@@ -183,12 +184,26 @@ function letak_jadual(){
 	});
 
 	$('span#1_cnt').text(cnt_1);
+	span_msg_cnt(1,cnt_1,cnt_1_d);
 	$('span#2_cnt').text(cnt_2);
 	$('span#3_cnt').text(cnt_3);
 	$('span#4_cnt').text(cnt_4);
 	$('span#5_cnt').text(cnt_5);
 
 	$('div.add_rph').on('click',add_rph);
+}
+
+function span_msg_cnt(no,cnt,cnt_d){
+	$('#'+no+'_cnt_d').html('');
+	if(cnt>0){
+		if(cnt_d == cnt){
+			$('#'+no+'_cnt_d').html(`<span class='greenspan'>All RPH task done!</span>`);
+		}else if(cnt_d == 0){
+			$('#'+no+'_cnt_d').html(`<span class='redspan'>All RPH task not yet done!</span>`);
+		}else{
+			$('#'+no+'_cnt_d').html(`<span class='redspan'>Only `+cnt_d+` from `+cnt+` RPH task done!</span>`);
+		}
+	}
 }
 
 function add_rph(event){

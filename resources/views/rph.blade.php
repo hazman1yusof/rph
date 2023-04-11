@@ -53,6 +53,12 @@
     .fld_nomarginbtm{
       margin-bottom: 0px !important;
     }
+    span.redspan{
+      color: darkred;
+    }
+    span.greenspan{
+      color: green;
+    }
 @endsection
 
 @section('header')
@@ -117,7 +123,7 @@
  <div class="ui inverted dimmer"></div>
     <div class="ui red segments">
       <div class="ui segment header">
-        Isnin<span class="kelas_cnt"><span id="1_cnt"></span> Kelas</span>
+        Isnin<span class="kelas_cnt"><span id="1_cnt"></span> Kelas</span> <span id="1_cnt_d" class="right floated"></span>
       </div>
       <div class="ui secondary segment haridiv" id="ISNIN">
         <div class="swiper">
@@ -129,7 +135,7 @@
 
     <div class="ui red segments">
       <div class="ui segment header">
-        Selasa<span class="kelas_cnt"><span id="2_cnt"></span> Kelas</span>
+        Selasa<span class="kelas_cnt"><span id="2_cnt"></span> Kelas</span> <span id="2_cnt_d" class="right floated"></span>
       </div>
       <div class="ui secondary segment haridiv" id="SELASA">
         <div class="swiper">
@@ -141,7 +147,7 @@
 
     <div class="ui red segments">
       <div class="ui segment header">
-        Rabu<span class="kelas_cnt"><span id="3_cnt"></span> Kelas</span>
+        Rabu<span class="kelas_cnt"><span id="3_cnt"></span> Kelas</span> <span id="3_cnt_d" class="right floated"></span>
       </div>
       <div class="ui secondary segment haridiv" id="RABU">
         <div class="swiper">
@@ -153,7 +159,7 @@
 
     <div class="ui red segments">
       <div class="ui segment header">
-        Khamis<span class="kelas_cnt"><span id="4_cnt"></span> Kelas</span>
+        Khamis<span class="kelas_cnt"><span id="4_cnt"></span> Kelas</span> <span id="4_cnt_d" class="right floated"></span>
       </div>
       <div class="ui secondary segment haridiv" id="KHAMIS">
         <div class="swiper">
@@ -165,7 +171,7 @@
 
     <div class="ui red segments">
       <div class="ui segment header">
-        Jumaat<span class="kelas_cnt"><span id="5_cnt"></span> Kelas</span>
+        Jumaat<span class="kelas_cnt"><span id="5_cnt"></span> Kelas</span> <span id="5_cnt_d" class="right floated"></span>
       </div>
       <div class="ui secondary segment haridiv" id="JUMAAT">
         <div class="swiper">
